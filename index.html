@@ -2,11 +2,11 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
-<title>آینه — تیترهای خبر ایران و جهان</title>
-<meta name="description" content="آینه: تیترهای تازه خبرگزاری‌های ایران و جهان در یک صفحهٔ سبک و سریع — با متن کامل خبر، عکس، دسته‌بندی و ترجمهٔ فوری.">
-<meta name="keywords" content="اخبار ایران, خبرگزاری, تیتر اخبار, اخبار جهان, ایرنا, ایسنا, مهر, بی‌بی‌سی فارسی">
-<meta name="author" content="آینه">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DevKit — آی‌پی، لوکیشن، DNS و ابزارهای برنامه‌نویس</title>
+<meta name="description" content="آی‌پی و موقعیت جغرافیایی شما، جست‌وجوی هر IP یا دامنه، رکوردهای DNS و یک جعبه‌ابزار کامل برنامه‌نویس: JSON، Base64، هش، JWT و زمان. همه در مرورگر، بدون ثبت‌نام.">
+<meta name="keywords" content="آی پی من, ip location, جستجوی ip, dns lookup, ابزار برنامه نویس, json formatter, base64, jwt decoder">
+<meta name="author" content="DevKit">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c0c0c" media="(prefers-color-scheme: dark)">
@@ -14,136 +14,250 @@
 <link rel="canonical" href="https://amirmahdipa77-tech.github.io/ayeneh/">
 
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="آینه">
-<meta property="og:title" content="آینه — تیترهای خبر ایران و جهان">
-<meta property="og:description" content="تیترهای تازه خبرگزاری‌های ایران و جهان، با متن کامل و ترجمه.">
+<meta property="og:site_name" content="DevKit">
+<meta property="og:title" content="DevKit — آی‌پی، لوکیشن، DNS و ابزارهای برنامه‌نویس">
+<meta property="og:description" content="آی‌پی شما، موقعیت جغرافیایی، ASN، رکوردهای DNS و ابزارهای روزمرهٔ برنامه‌نویسی — همه در مرورگر.">
 <meta property="og:url" content="https://amirmahdipa77-tech.github.io/ayeneh/">
 <meta property="og:image" content="https://amirmahdipa77-tech.github.io/ayeneh/icons/icon-512.png">
 <meta property="og:locale" content="fa_IR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="آینه — تیترهای خبر ایران و جهان">
-<meta name="twitter:description" content="تیترهای تازه خبرگزاری‌های ایران و جهان، با متن کامل و ترجمه.">
-<meta name="twitter:image" content="https://amirmahdipa77-tech.github.io/ayeneh/icons/icon-512.png">
 
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/favicon-64.png" sizes="64x64" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="alternate" type="application/rss+xml" title="آینه" href="feed.xml">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "آینه",
-  "alternateName": "Ayeneh",
+  "@type": "WebApplication",
+  "name": "DevKit",
   "url": "https://amirmahdipa77-tech.github.io/ayeneh/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
   "inLanguage": "fa",
-  "description": "تیترهای تازه خبرگزاری‌های ایران و جهان، با متن کامل و ترجمه.",
-  "publisher": { "@type": "Organization", "name": "آینه" }
+  "offers": { "@type": "Offer", "price": "0" },
+  "description": "آی‌پی و موقعیت جغرافیایی، جست‌وجوی IP و دامنه، DNS و ابزارهای برنامه‌نویس."
 }
 </script>
 </head>
 <body>
 
-<div class="app" id="app">
-
-  <header class="appbar" id="appbar">
-    <div class="appbar-row">
-      <div class="brand">
-        <span class="logo" aria-hidden="true"></span>
-        <h1>آینه</h1>
-      </div>
-      <div class="appbar-actions">
-        <button class="icon-btn" id="btn-search" type="button" aria-label="جست‌وجو">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/></svg>
-        </button>
-        <button class="icon-btn" id="btn-filter" type="button" aria-label="فیلتر منابع">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"/></svg>
-        </button>
-        <button class="icon-btn" id="btn-theme" type="button" aria-label="پوسته">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2Z"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="search-wrap" id="search-wrap" hidden>
-      <div class="search">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/></svg>
-        <input id="q" type="search" placeholder="جست‌وجو در تیترها…" autocomplete="off" aria-label="جست‌وجو">
-        <button class="clear" id="q-clear" type="button" aria-label="پاک کردن">✕</button>
-      </div>
-    </div>
-
-    <nav class="tabs" id="tabs" role="tablist" aria-label="دسته‌ها">
-      <span class="tab-indicator" id="tab-indicator" aria-hidden="true"></span>
+<header class="bar">
+  <div class="bar-in">
+    <a class="brand" href="./" aria-label="DevKit">
+      <span class="mark" aria-hidden="true"><span>&gt;</span><i>_</i></span>
+      <span class="brand-name">devkit</span>
+    </a>
+    <nav class="nav" aria-label="بخش‌ها">
+      <a href="#net" class="nav-a">شبکه</a>
+      <a href="#tools" class="nav-a">ابزارها</a>
+      <a href="#device" class="nav-a">دستگاه</a>
     </nav>
-  </header>
-
-  <div class="ptr" id="ptr" aria-hidden="true"><span class="ptr-spinner"></span></div>
-
-  <main class="feed" id="feed" role="tabpanel"></main>
-  <div class="sentinel" id="sentinel"></div>
-
-  <footer class="foot" id="foot"></footer>
-
-  <section class="reader" id="reader" hidden aria-modal="true" role="dialog">
-    <div class="reader-bar" id="reader-bar">
-      <button class="icon-btn" id="reader-back" type="button" aria-label="بازگشت">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-      </button>
-      <div class="reader-progress"><span id="reader-progress"></span></div>
-      <button class="icon-btn" id="reader-share" type="button" aria-label="اشتراک‌گذاری">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+    <div class="bar-actions">
+      <button class="icon-btn" id="btn-theme" type="button" aria-label="تغییر پوسته">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2Z"/></svg>
       </button>
     </div>
+  </div>
+</header>
 
-    <div class="reader-scroll" id="reader-scroll">
-      <div id="reader-body"></div>
+<main>
+
+  <!-- ══════════ hero: your ip ══════════ -->
+  <section id="net" class="sec">
+    <div class="ip-card" id="ip-card">
+      <div class="ip-card-head">
+        <span class="k">آی‌پی شما</span>
+        <span class="src-tag" id="ip-provider"></span>
+      </div>
+
+      <div class="ip-main">
+        <span class="ip-value mono" id="my-ip">—</span>
+        <button class="btn btn-icon" id="copy-ip" type="button" title="کپی آی‌پی">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>
+        </button>
+        <button class="btn btn-icon" id="reload-ip" type="button" title="تازه‌سازی">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
+        </button>
+      </div>
+
+      <div class="ip-sub" id="ip-sub"><span class="skeleton-line"></span></div>
+
+      <dl class="grid-4" id="ip-grid"></dl>
+
+      <div class="ip-foot">
+        <a class="btn btn-sm" id="map-link" href="#" target="_blank" rel="noopener">نمایش روی نقشه</a>
+        <button class="btn btn-sm" id="copy-json" type="button">کپی JSON</button>
+        <span class="hint" id="ip-v6"></span>
+      </div>
     </div>
 
-    <div class="reader-actions" id="reader-actions">
-      <button class="pill pill-primary" id="btn-translate" type="button">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h9M8.5 6c0 4-2 7-4.5 9M6 10c1 2.5 3 4.5 5 5.5"/><path d="m13 20 3.5-8 3.5 8M14.5 17h5"/></svg>
-        <span>ترجمه</span>
-      </button>
-      <button class="pill" id="btn-original" type="button" hidden>متن اصلی</button>
-      <a class="pill pill-ghost" id="btn-source" href="#" target="_blank" rel="noopener noreferrer">منبع اصلی</a>
+    <!-- lookup -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>جست‌وجوی آی‌پی یا دامنه</h2>
+        <p>هر IPv4، IPv6 یا دامنه را بده؛ اگر دامنه باشد اول با DNS حل می‌شود.</p>
+      </div>
+      <form class="row" id="lookup-form">
+        <input id="lookup-input" class="input mono" type="text" inputmode="url" autocomplete="off" spellcheck="false"
+               placeholder="8.8.8.8  یا  example.com" dir="ltr" required>
+        <button class="btn btn-primary" type="submit">بررسی</button>
+      </form>
+      <div id="lookup-out" class="out" hidden></div>
+      <div class="chips" id="lookup-samples">
+        <button class="chip" type="button" data-ip="8.8.8.8">8.8.8.8</button>
+        <button class="chip" type="button" data-ip="1.1.1.1">1.1.1.1</button>
+        <button class="chip" type="button" data-ip="185.55.225.1">185.55.225.1</button>
+        <button class="chip" type="button" data-ip="2001:4860:4860::8888">IPv6</button>
+        <button class="chip" type="button" data-ip="digikala.com">digikala.com</button>
+      </div>
+    </div>
+
+    <!-- dns -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>رکوردهای DNS</h2>
+        <p>از طریق DNS-over-HTTPS کلادفلر، مستقیم از مرورگر.</p>
+      </div>
+      <form class="row" id="dns-form">
+        <input id="dns-input" class="input mono" type="text" autocomplete="off" spellcheck="false"
+               placeholder="example.com" dir="ltr" value="github.com" required>
+        <select id="dns-type" class="input select mono" aria-label="نوع رکورد">
+          <option>A</option><option>AAAA</option><option>MX</option>
+          <option>TXT</option><option>NS</option><option>CNAME</option><option>SOA</option><option>CAA</option>
+        </select>
+        <button class="btn btn-primary" type="submit">بگیر</button>
+      </form>
+      <div id="dns-out" class="out" hidden></div>
     </div>
   </section>
 
-  <div class="scrim" id="scrim" hidden></div>
-
-  <div class="sheet" id="sheet-filter" hidden role="dialog" aria-label="فیلتر منابع">
-    <div class="sheet-handle"></div>
-    <div class="sheet-head">
-      <h2>منابع</h2>
-      <button class="chip-btn" id="sources-all" type="button">همه</button>
+  <!-- ══════════ tools ══════════ -->
+  <section id="tools" class="sec">
+    <div class="sec-head">
+      <h2>جعبه‌ابزار</h2>
+      <p>همه‌چیز محلی و آفلاین اجرا می‌شود؛ هیچ داده‌ای جایی نمی‌رود.</p>
     </div>
-    <div class="sheet-body" id="sources-list"></div>
-  </div>
 
-  <div class="sheet" id="sheet-lang" hidden role="dialog" aria-label="زبان ترجمه">
-    <div class="sheet-handle"></div>
-    <div class="sheet-head"><h2>ترجمه به</h2></div>
-    <div class="sheet-body lang-grid" id="lang-list"></div>
-  </div>
+    <div class="segmented" id="tool-tabs" role="tablist">
+      <button class="seg" role="tab" aria-selected="true" data-tool="json">JSON</button>
+      <button class="seg" role="tab" aria-selected="false" data-tool="base64">Base64</button>
+      <button class="seg" role="tab" aria-selected="false" data-tool="url">URL</button>
+      <button class="seg" role="tab" aria-selected="false" data-tool="hash">هش</button>
+      <button class="seg" role="tab" aria-selected="false" data-tool="jwt">JWT</button>
+      <button class="seg" role="tab" aria-selected="false" data-tool="time">زمان</button>
+      <button class="seg" role="tab" aria-selected="false" data-tool="uuid">UUID</button>
+    </div>
 
-  <div class="toast" id="toast" hidden></div>
-</div>
+    <div class="tool" id="tool-json">
+      <div class="row row-top">
+        <span class="k">JSON</span>
+        <div class="row-actions">
+          <button class="btn btn-sm" data-act="json-format" type="button">مرتب‌سازی</button>
+          <button class="btn btn-sm" data-act="json-minify" type="button">فشرده</button>
+          <button class="btn btn-sm" data-act="json-clear" type="button">پاک</button>
+        </div>
+      </div>
+      <textarea id="json-in" class="area mono" spellcheck="false" dir="ltr" placeholder='{"hello":"world","n":[1,2,3]}'></textarea>
+      <div class="out-line" id="json-msg"></div>
+    </div>
 
-<noscript>
-  <div style="max-width:680px;margin:0 auto;padding:24px 18px;font-family:Tahoma,sans-serif;line-height:1.9">
-    <h2>آینه — تیترهای خبر ایران و جهان</h2>
-    <p>برای دیدن فهرست کامل به جاوااسکریپت نیاز است، اما می‌توانید از این آدرس‌ها استفاده کنید:</p>
-    <ul>
-      <li><a href="feed.xml">خوراک RSS تیترها</a></li>
-      <li><a href="sitemap.xml">نقشهٔ سایت (همهٔ خبرها)</a></li>
-    </ul>
+    <div class="tool" id="tool-base64" hidden>
+      <div class="row row-top">
+        <span class="k">Base64 / UTF-8</span>
+        <div class="row-actions">
+          <button class="btn btn-sm" data-act="b64-enc" type="button">کدگذاری</button>
+          <button class="btn btn-sm" data-act="b64-dec" type="button">کدگشایی</button>
+          <button class="btn btn-sm" data-act="b64-clear" type="button">پاک</button>
+        </div>
+      </div>
+      <textarea id="b64-in" class="area mono" spellcheck="false" dir="ltr" placeholder="متن یا رشتهٔ base64…"></textarea>
+      <div class="out-line" id="b64-msg"></div>
+    </div>
+
+    <div class="tool" id="tool-url" hidden>
+      <div class="row row-top">
+        <span class="k">URL encode / decode</span>
+        <div class="row-actions">
+          <button class="btn btn-sm" data-act="url-enc" type="button">کدگذاری</button>
+          <button class="btn btn-sm" data-act="url-dec" type="button">کدگشایی</button>
+          <button class="btn btn-sm" data-act="url-clear" type="button">پاک</button>
+        </div>
+      </div>
+      <textarea id="url-in" class="area mono" spellcheck="false" dir="ltr" placeholder="https://example.com/?q=سلام&x=1"></textarea>
+      <div class="out-line" id="url-msg"></div>
+    </div>
+
+    <div class="tool" id="tool-hash" hidden>
+      <div class="row row-top">
+        <span class="k">SHA-1 / 256 / 384 / 512</span>
+        <div class="row-actions">
+          <button class="btn btn-sm" data-act="hash-clear" type="button">پاک</button>
+        </div>
+      </div>
+      <textarea id="hash-in" class="area mono" spellcheck="false" dir="ltr" placeholder="متنی که باید هش شود…"></textarea>
+      <div class="kv" id="hash-out"></div>
+    </div>
+
+    <div class="tool" id="tool-jwt" hidden>
+      <div class="row row-top">
+        <span class="k">JWT decoder</span>
+        <div class="row-actions">
+          <button class="btn btn-sm" data-act="jwt-clear" type="button">پاک</button>
+        </div>
+      </div>
+      <textarea id="jwt-in" class="area mono" spellcheck="false" dir="ltr" placeholder="eyJhbGciOi…"></textarea>
+      <div class="out" id="jwt-out" hidden></div>
+    </div>
+
+    <div class="tool" id="tool-time" hidden>
+      <div class="row row-top">
+        <span class="k">Unix timestamp</span>
+        <div class="row-actions">
+          <button class="btn btn-sm" data-act="time-now" type="button">همین حالا</button>
+        </div>
+      </div>
+      <input id="time-in" class="input mono" dir="ltr" placeholder="1762345678 یا 2026-11-06T08:00:00Z">
+      <div class="kv" id="time-out"></div>
+    </div>
+
+    <div class="tool" id="tool-uuid" hidden>
+      <div class="row row-top">
+        <span class="k">UUID v4</span>
+        <div class="row-actions">
+          <input id="uuid-count" class="input input-tiny mono" type="number" min="1" max="50" value="5" aria-label="تعداد">
+          <button class="btn btn-sm" data-act="uuid-gen" type="button">تولید</button>
+        </div>
+      </div>
+      <pre class="code mono" id="uuid-out" dir="ltr"></pre>
+    </div>
+  </section>
+
+  <!-- ══════════ device ══════════ -->
+  <section id="device" class="sec">
+    <div class="sec-head">
+      <h2>دستگاه و مرورگر</h2>
+      <p>چیزهایی که مرورگر شما دربارهٔ خودش لو می‌دهد.</p>
+    </div>
+    <dl class="kv" id="device-out"></dl>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <span>devkit — ساخته‌شده روی GitHub Pages</span>
+    <span class="dot">·</span>
+    <span>آی‌پی و لوکیشن: <a href="https://ipwho.is" target="_blank" rel="noopener">ipwho.is</a></span>
+    <span class="dot">·</span>
+    <span>DNS: <a href="https://developers.cloudflare.com/1.1.1.1/" target="_blank" rel="noopener">Cloudflare DoH</a></span>
   </div>
-</noscript>
+</footer>
+
+<div class="toast" id="toast" hidden></div>
 
 <script src="assets/app.js" defer></script>
 </body>

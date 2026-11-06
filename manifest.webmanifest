@@ -1,37 +1,19 @@
 {
-  "name": "آینه — خبر ایران و جهان",
-  "short_name": "آینه",
-  "description": "تیترهای تازه خبرگزاری‌های ایران و جهان، با متن کامل و ترجمه.",
+  "name": "DevKit — ابزارهای شبکه و برنامه‌نویس",
+  "short_name": "DevKit",
+  "description": "آی‌پی و لوکیشن، جست‌وجوی IP و دامنه، DNS و ابزارهای روزمرهٔ برنامه‌نویسی.",
   "lang": "fa",
   "dir": "rtl",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#fafaf9",
   "theme_color": "#121212",
-  "categories": [
-    "news",
-    "magazines"
-  ],
+  "categories": ["developer", "utilities", "productivity"],
   "icons": [
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
