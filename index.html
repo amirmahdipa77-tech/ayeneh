@@ -25,7 +25,6 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://flagcdn.com" crossorigin>
-<link rel="preconnect" href="https://commons.wikimedia.org" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
 
 <script type="application/ld+json">
@@ -44,21 +43,16 @@
 </head>
 <body>
 
-<div class="bg" aria-hidden="true">
-  <div class="bg-tint" id="bg-tint"></div>
-  <img class="bg-flag" id="bg-flag" alt="" decoding="async">
-  <img class="bg-photo" id="bg-photo" alt="" decoding="async">
-  <div class="bg-scrim"></div>
-</div>
+<div class="wrap">
 
-<main class="stage">
-  <section class="card" id="card" aria-live="polite">
+  <header class="flag-band" id="flag-band">
+    <img class="flag-img" id="flag" alt="" decoding="async">
+    <div class="flag-fallback" id="flag-fallback" hidden><span id="flag-code">··</span></div>
+  </header>
 
-    <div class="head">
-      <h1 class="country" id="country">…</h1>
-      <img class="flag" id="flag" alt="" width="52" height="39" hidden>
-    </div>
+  <main class="glass" id="glass" aria-live="polite">
 
+    <h1 class="country" id="country">…</h1>
     <p class="ip mono" id="my-ip">···</p>
     <p class="meta" id="ip-meta"></p>
     <p class="facts mono" id="facts"></p>
@@ -69,10 +63,10 @@
       <button class="act" id="reload" type="button">تازه‌سازی</button>
       <span class="src" id="provider"></span>
     </div>
-  </section>
+  </main>
 
   <p class="sig">devkit</p>
-</main>
+</div>
 
 <div class="toast" id="toast" hidden></div>
 
