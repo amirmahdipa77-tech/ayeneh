@@ -162,6 +162,16 @@ function pickImage(block) {
   return "";
 }
 
+/** RSS descriptions often carry the CMS footer; drop it. */
+function tidyExcerpt(text) {
+  return text
+    .replace(/\s*The post .*?appeared first on .*$/i, "")
+    .replace(/\s*appeared first on .*$/i, "")
+    .replace(/\s*مطلب .*? اولین بار در .*? منتشر شد\.?$/i, "")
+    .replace(/\s*\[\s*…\s*\]$/, "")
+    .trim();
+}
+
 function parseFeed(xml, source) {
   const blocks = [
     ...xml.matchAll(/<item\b[\s\S]*?<\/item>/gi),
@@ -180,7 +190,7 @@ function parseFeed(xml, source) {
     seen.add(u);
 
     const raw = pick(block, ["description", "summary", "content:encoded", "content"]);
-    const excerpt = clip(clean(raw), 200);
+    const excerpt = clip(tidyExcerpt(clean(raw)), 200);
     const date = parseDate(pick(block, ["pubDate", "published", "updated", "dc:date", "date"]));
     const img = pickImage(block);
 
