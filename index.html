@@ -3,20 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DevKit — آی‌پی، لوکیشن، DNS و ابزارهای برنامه‌نویس</title>
-<meta name="description" content="آی‌پی و موقعیت جغرافیایی شما، جست‌وجوی هر IP یا دامنه، رکوردهای DNS و یک جعبه‌ابزار کامل برنامه‌نویس: JSON، Base64، هش، JWT و زمان. همه در مرورگر، بدون ثبت‌نام.">
-<meta name="keywords" content="آی پی من, ip location, جستجوی ip, dns lookup, ابزار برنامه نویس, json formatter, base64, jwt decoder">
+<title>آی‌پی من — کشور، اپراتور و موقعیت | DevKit</title>
+<meta name="description" content="آی‌پی، کشور، شهر، اپراتور و موقعیت جغرافیایی شما در یک نگاه — سریع، بدون ثبت‌نام، مستقیم در مرورگر.">
 <meta name="author" content="DevKit">
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0a0a">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://amirmahdipa77-tech.github.io/ayeneh/">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="DevKit">
-<meta property="og:title" content="DevKit — آی‌پی، لوکیشن، DNS و ابزارهای برنامه‌نویس">
-<meta property="og:description" content="آی‌پی شما، موقعیت جغرافیایی، ASN، رکوردهای DNS و ابزارهای روزمرهٔ برنامه‌نویسی — همه در مرورگر.">
+<meta property="og:title" content="آی‌پی من — کشور، اپراتور و موقعیت">
+<meta property="og:description" content="آی‌پی و موقعیت جغرافیایی شما در یک نگاه.">
 <meta property="og:url" content="https://amirmahdipa77-tech.github.io/ayeneh/">
 <meta property="og:image" content="https://amirmahdipa77-tech.github.io/ayeneh/icons/icon-512.png">
 <meta property="og:locale" content="fa_IR">
@@ -26,205 +24,55 @@
 <link rel="icon" href="icons/favicon-64.png" sizes="64x64" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://flagcdn.com" crossorigin>
+<link rel="preconnect" href="https://commons.wikimedia.org" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "DevKit",
+  "name": "DevKit — آی‌پی من",
   "url": "https://amirmahdipa77-tech.github.io/ayeneh/",
-  "applicationCategory": "DeveloperApplication",
+  "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "inLanguage": "fa",
   "offers": { "@type": "Offer", "price": "0" },
-  "description": "آی‌پی و موقعیت جغرافیایی، جست‌وجوی IP و دامنه، DNS و ابزارهای برنامه‌نویس."
+  "description": "آی‌پی، کشور، شهر، اپراتور و موقعیت جغرافیایی در یک نگاه."
 }
 </script>
 </head>
 <body>
 
-<header class="bar">
-  <div class="bar-in">
-    <a class="brand" href="./" aria-label="DevKit">
-      <span class="mark" aria-hidden="true"><span>&gt;</span><i>_</i></span>
-    </a>
-    <nav class="nav" aria-label="بخش‌ها">
-      <a href="#net">شبکه</a>
-      <a href="#tools">ابزارها</a>
-      <a href="#device">دستگاه</a>
-    </nav>
-    <button class="icon-btn" id="btn-theme" type="button" aria-label="تغییر پوسته">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2Z"/></svg>
-    </button>
-  </div>
-</header>
+<div class="bg" aria-hidden="true">
+  <div class="bg-tint" id="bg-tint"></div>
+  <img class="bg-flag" id="bg-flag" alt="" decoding="async">
+  <img class="bg-photo" id="bg-photo" alt="" decoding="async">
+  <div class="bg-scrim"></div>
+</div>
 
-<main>
+<main class="stage">
+  <section class="card" id="card" aria-live="polite">
 
-  <!-- ════════ you ════════ -->
-  <section id="net" class="hero">
-    <div class="hero-country">
-      <img id="flag" class="flag" alt="" width="52" height="39" hidden>
-      <h1 id="country">—</h1>
+    <div class="head">
+      <h1 class="country" id="country">…</h1>
+      <img class="flag" id="flag" alt="" width="52" height="39" hidden>
     </div>
 
-    <p class="hero-ip mono" id="my-ip">—</p>
-    <p class="hero-meta" id="ip-meta"></p>
+    <p class="ip mono" id="my-ip">···</p>
+    <p class="meta" id="ip-meta"></p>
+    <p class="facts mono" id="facts"></p>
 
-    <div class="hero-tools">
-      <button class="tbtn" id="copy-ip" type="button">کپی</button>
-      <button class="tbtn" id="copy-json" type="button">JSON</button>
-      <a class="tbtn" id="map-link" href="#" target="_blank" rel="noopener">نقشه</a>
-      <button class="tbtn" id="reload-ip" type="button">تازه‌سازی</button>
-      <span class="src-tag" id="ip-provider"></span>
-    </div>
-
-    <dl class="facts" id="facts"></dl>
-    <p class="hero-v6 mono" id="ip-v6"></p>
-  </section>
-
-  <!-- ════════ lookup ════════ -->
-  <section class="sec">
-    <h2 class="sec-t">آی‌پی یا دامنه</h2>
-    <form class="row" id="lookup-form">
-      <input id="lookup-input" class="input mono" type="text" inputmode="url" autocomplete="off" spellcheck="false"
-             placeholder="8.8.8.8" dir="ltr" required>
-      <button class="btn" type="submit">بررسی</button>
-    </form>
-    <div id="lookup-out" class="out" hidden></div>
-    <div class="chips" id="lookup-samples">
-      <button class="chip" type="button" data-ip="8.8.8.8">8.8.8.8</button>
-      <button class="chip" type="button" data-ip="1.1.1.1">1.1.1.1</button>
-      <button class="chip" type="button" data-ip="2001:4860:4860::8888">IPv6</button>
-      <button class="chip" type="button" data-ip="digikala.com">digikala.com</button>
+    <div class="actions">
+      <button class="act" id="copy-ip" type="button">کپی</button>
+      <a class="act" id="map-link" href="#" target="_blank" rel="noopener">نقشه</a>
+      <button class="act" id="reload" type="button">تازه‌سازی</button>
+      <span class="src" id="provider"></span>
     </div>
   </section>
 
-  <!-- ════════ dns ════════ -->
-  <section class="sec">
-    <h2 class="sec-t">DNS</h2>
-    <form class="row" id="dns-form">
-      <input id="dns-input" class="input mono" type="text" autocomplete="off" spellcheck="false"
-             placeholder="example.com" dir="ltr" value="github.com" required>
-      <select id="dns-type" class="input select mono" aria-label="نوع رکورد">
-        <option>A</option><option>AAAA</option><option>MX</option>
-        <option>TXT</option><option>NS</option><option>CNAME</option><option>SOA</option><option>CAA</option>
-      </select>
-      <button class="btn" type="submit">بگیر</button>
-    </form>
-    <div id="dns-out" class="out" hidden></div>
-  </section>
-
-  <!-- ════════ tools ════════ -->
-  <section id="tools" class="sec">
-    <h2 class="sec-t">ابزارها</h2>
-
-    <div class="segmented" id="tool-tabs" role="tablist">
-      <button class="seg" role="tab" aria-selected="true" data-tool="json">JSON</button>
-      <button class="seg" role="tab" aria-selected="false" data-tool="base64">Base64</button>
-      <button class="seg" role="tab" aria-selected="false" data-tool="url">URL</button>
-      <button class="seg" role="tab" aria-selected="false" data-tool="hash">هش</button>
-      <button class="seg" role="tab" aria-selected="false" data-tool="jwt">JWT</button>
-      <button class="seg" role="tab" aria-selected="false" data-tool="time">زمان</button>
-      <button class="seg" role="tab" aria-selected="false" data-tool="uuid">UUID</button>
-    </div>
-
-    <div class="tool" id="tool-json">
-      <div class="tool-bar">
-        <span class="k">JSON</span>
-        <div class="tool-actions">
-          <button class="tbtn" data-act="json-format" type="button">مرتب</button>
-          <button class="tbtn" data-act="json-minify" type="button">فشرده</button>
-          <button class="tbtn" data-act="json-clear" type="button">پاک</button>
-        </div>
-      </div>
-      <textarea id="json-in" class="area mono" spellcheck="false" dir="ltr" placeholder='{"hello":"world"}'></textarea>
-      <div class="out-line" id="json-msg"></div>
-    </div>
-
-    <div class="tool" id="tool-base64" hidden>
-      <div class="tool-bar">
-        <span class="k">Base64</span>
-        <div class="tool-actions">
-          <button class="tbtn" data-act="b64-enc" type="button">کدگذاری</button>
-          <button class="tbtn" data-act="b64-dec" type="button">کدگشایی</button>
-          <button class="tbtn" data-act="b64-clear" type="button">پاک</button>
-        </div>
-      </div>
-      <textarea id="b64-in" class="area mono" spellcheck="false" dir="ltr" placeholder="متن یا base64"></textarea>
-      <div class="out-line" id="b64-msg"></div>
-    </div>
-
-    <div class="tool" id="tool-url" hidden>
-      <div class="tool-bar">
-        <span class="k">URL</span>
-        <div class="tool-actions">
-          <button class="tbtn" data-act="url-enc" type="button">کدگذاری</button>
-          <button class="tbtn" data-act="url-dec" type="button">کدگشایی</button>
-          <button class="tbtn" data-act="url-clear" type="button">پاک</button>
-        </div>
-      </div>
-      <textarea id="url-in" class="area mono" spellcheck="false" dir="ltr" placeholder="https://example.com/?q=سلام"></textarea>
-      <div class="out-line" id="url-msg"></div>
-    </div>
-
-    <div class="tool" id="tool-hash" hidden>
-      <div class="tool-bar">
-        <span class="k">SHA</span>
-        <div class="tool-actions"><button class="tbtn" data-act="hash-clear" type="button">پاک</button></div>
-      </div>
-      <textarea id="hash-in" class="area area-sm mono" spellcheck="false" dir="ltr" placeholder="متن"></textarea>
-      <dl class="kv" id="hash-out"></dl>
-    </div>
-
-    <div class="tool" id="tool-jwt" hidden>
-      <div class="tool-bar">
-        <span class="k">JWT</span>
-        <div class="tool-actions"><button class="tbtn" data-act="jwt-clear" type="button">پاک</button></div>
-      </div>
-      <textarea id="jwt-in" class="area area-sm mono" spellcheck="false" dir="ltr" placeholder="eyJhbGciOi…"></textarea>
-      <div class="out" id="jwt-out" hidden></div>
-    </div>
-
-    <div class="tool" id="tool-time" hidden>
-      <div class="tool-bar">
-        <span class="k">زمان</span>
-        <div class="tool-actions"><button class="tbtn" data-act="time-now" type="button">حالا</button></div>
-      </div>
-      <input id="time-in" class="input mono" dir="ltr" placeholder="1762345678">
-      <dl class="kv" id="time-out"></dl>
-    </div>
-
-    <div class="tool" id="tool-uuid" hidden>
-      <div class="tool-bar">
-        <span class="k">UUID v4</span>
-        <div class="tool-actions">
-          <input id="uuid-count" class="input input-tiny mono" type="number" min="1" max="50" value="5" aria-label="تعداد">
-          <button class="tbtn" data-act="uuid-gen" type="button">تولید</button>
-        </div>
-      </div>
-      <pre class="code mono" id="uuid-out" dir="ltr"></pre>
-    </div>
-  </section>
-
-  <!-- ════════ device ════════ -->
-  <section id="device" class="sec">
-    <h2 class="sec-t">دستگاه</h2>
-    <dl class="kv kv-dense" id="device-out"></dl>
-  </section>
-
+  <p class="sig">devkit</p>
 </main>
-
-<footer class="foot">
-  <span>devkit</span>
-  <span class="dot">·</span>
-  <a href="https://ipwho.is" target="_blank" rel="noopener">ipwho.is</a>
-  <span class="dot">·</span>
-  <a href="https://developers.cloudflare.com/1.1.1.1/" target="_blank" rel="noopener">cloudflare doh</a>
-</footer>
 
 <div class="toast" id="toast" hidden></div>
 
