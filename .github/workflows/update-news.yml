@@ -19,7 +19,7 @@ concurrency:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -27,8 +27,10 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Fetch feeds
-        run: node scripts/fetch.mjs
+      - name: Fetch feeds and article bodies
+        env:
+          EXTRACT_LIMIT: "90"
+        run: node scripts/build.mjs
 
       - name: Commit data
         run: |
@@ -38,6 +40,6 @@ jobs:
             echo "بدون تغییر"
             exit 0
           fi
-          git add data/news.json
+          git add data
           git commit -m "data: به‌روزرسانی تیترها $(date -u +%Y-%m-%dT%H:%MZ)"
           git push
