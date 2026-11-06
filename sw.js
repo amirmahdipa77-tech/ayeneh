@@ -1,5 +1,5 @@
 /* devkit — offline shell. All tools keep working without a network. */
-const CACHE = "devkit-v1";
+const CACHE = "devkit-v2";
 const SHELL = [
   "./",
   "./index.html",
