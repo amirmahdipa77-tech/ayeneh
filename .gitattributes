@@ -1,1 +1,3 @@
 data/news.json linguist-generated=true
+data/img/** binary
+icons/** binary

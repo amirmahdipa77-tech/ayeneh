@@ -63,6 +63,21 @@ function absolute(url, base) {
   }
 }
 
+const CHROME = /^(ورود|عضویت|ثبت ?نام|خبرنامه|دانلود|نصب|اپلیکیشن|تبلیغ|تبلیغات|پربازدید|پیشنهاد|اشتراک|کپی|چاپ|پرینت|نظر|دیدگاه|بازگشت|صفحه اصلی|خانه|منو|جستجو|جست‌وجو|دسته‌بندی|برچسب|آخرین اخبار|بیشترین بازدید|ارسال به|لینک|نشانی|تلفن|ایمیل|درباره ما|تماس با ما)/;
+
+/** Heuristic: is this block navigation/chrome rather than article text? */
+function looksLikeJunk(text, raw) {
+  if (text.length < 45) return true;
+  if (CHROME.test(text) && text.length < 130) return true;
+  if (/^(©|کلیه حقوق|تمامی حقوق|تمام حقوق)/.test(text)) return true;
+  if (/بیشتر بخوانید|ادامه مطلب|مطلب مرتبط|مطالب مرتبط|اخبار مرتبط/.test(text) && text.length < 120) return true;
+  if (/^(منبع|عکس|فیلم|ویدیو|تیزر)\s*[:：]/.test(text) && text.length < 100) return true;
+  // link density: menus and related-link lists are mostly anchors
+  const links = (raw.match(/<a\b/gi) || []).length;
+  if (links >= 2 && text.length / links < 45) return true;
+  return false;
+}
+
 /** Every leaf <p> on the page — the primary signal. */
 function collectParagraphs(html) {
   const out = [];
@@ -70,7 +85,7 @@ function collectParagraphs(html) {
   let m;
   while ((m = re.exec(html))) {
     const text = clean(m[1]);
-    if (text.length >= 45) out.push(text);
+    if (!looksLikeJunk(text, m[1])) out.push(text);
   }
   return out;
 }
@@ -104,15 +119,28 @@ function containerParagraphs(html) {
 function tidy(paras) {
   const seen = new Set();
   const out = [];
+  let total = 0;
   for (const p of paras) {
     const t = p.replace(/\s+/g, " ").trim();
     if (t.length < 45) continue;
     if (JUNK_LINE.test(t) && t.length < 110) continue;
+    if (CHROME.test(t) && t.length < 110) continue;
     if (/^(نوشته|نویسنده|مترجم|عکس|فیلم|ویدیو)\s*[:：]/.test(t) && t.length < 90) continue;
-    const key = t.slice(0, 55);
+
+    const key = t.slice(0, 45);
     if (seen.has(key)) continue;
+    // catch near-duplicates that only differ in the tail
+    let dup = false;
+    for (const kept of out.slice(-4)) {
+      if (kept.slice(0, 45) === key) { dup = true; break; }
+    }
+    if (dup) continue;
+
     seen.add(key);
-    out.push(t.length > 1600 ? t.slice(0, 1600) + "…" : t);
+    const clipped = t.length > 1800 ? t.slice(0, 1800) + "…" : t;
+    out.push(clipped);
+    total += clipped.length;
+    if (out.length >= 70 || total > 26000) break;
   }
   return out;
 }

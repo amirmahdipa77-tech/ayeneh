@@ -1,0 +1,19 @@
+{
+  "name": "آینه — خبر ایران و جهان",
+  "short_name": "آینه",
+  "description": "تیترهای تازه خبرگزاری‌های ایران و جهان، با متن کامل و ترجمه.",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f7f5",
+  "theme_color": "#e0442b",
+  "categories": ["news", "magazines"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

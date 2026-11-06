@@ -11,15 +11,18 @@
  * blocked article page never takes the build down.
  */
 
-import { readFile, writeFile, mkdir, readdir, unlink } from "node:fs/promises";
+import { readFile, writeFile, mkdir, readdir, unlink, rm } from "node:fs/promises";
 import { join } from "node:path";
 
 import {
   clean, clip, decodeEntities, fetchText, normUrl, parseDate, shortHash, unwrapCdata,
 } from "./lib/text.mjs";
 import { extractArticle } from "./lib/article.mjs";
+import { imageId, hasImage, optimizeImage, writeImage, pruneImages, IMG_DIR } from "./lib/images.mjs";
+import { articlePage, sitemap, robots, rssFeed } from "./lib/seo.mjs";
 
 const NEWS = "data/news.json";
+const PAGE_DIR = "a";
 const ART_DIR = "data/articles";
 const PER_SOURCE = 40;
 const MAX_ITEMS = 900;
@@ -378,31 +381,127 @@ async function main() {
   }
   if (removed) console.log(`  ${removed} فایل قدیمی پاک شد`);
 
-  // ---- images: prefer the article's og:image when we have one ----
+  // ---- merge in the article body (better image, byline) ----
   const finalIds = new Set([...cached, ...extracted.filter(Boolean)]);
-  const final = await Promise.all(
-    items.map(async (it) => {
-      let img = it.img;
-      if (finalIds.has(it.i)) {
-        const art = await readArticle(it.i);
-        if (art?.img) img = art.img;
+  const prevByUrl = new Map((previous.items || []).map((it) => [it.u, it]));
+
+  const final = [];
+  for (const it of items) {
+    let img = it.img;
+    let art = null;
+    if (finalIds.has(it.i)) {
+      art = await readArticle(it.i);
+      if (art?.img) img = art.img;
+    }
+    final.push({ ...it, img, f: finalIds.has(it.i) ? 1 : 0, _art: art });
+  }
+
+  // ---- images: local, downscaled, WebP ----
+  const keepImg = new Set();
+  let downloaded = 0;
+  let failedImg = 0;
+
+  await pool(
+    final.map((it) => async () => {
+      if (!it.img) return;
+
+      // already local (kept from an earlier run): keep the file, carry the blur over
+      if (it.img.startsWith(`${IMG_DIR}/`)) {
+        keepImg.add(it.img.slice(IMG_DIR.length + 1).replace(/\.webp$/, ""));
+        const old = prevByUrl.get(it.u);
+        if (old) {
+          it.blur = old.blur;
+          it.col = old.col;
+          it.iw = old.iw;
+          it.ih = old.ih;
+        }
+        return;
       }
-      return { ...it, img, f: finalIds.has(it.i) ? 1 : 0 };
-    })
+
+      const remote = it.img;
+      const id = imageId(remote);
+      keepImg.add(id);
+
+      const prev = prevByUrl.get(it.u);
+      if (prev?.img === `${IMG_DIR}/${id}.webp` && prev.iw) {
+        it.img = prev.img;
+        it.blur = prev.blur;
+        it.col = prev.col;
+        it.iw = prev.iw;
+        it.ih = prev.ih;
+        return;
+      }
+      if (await hasImage(id)) {
+        it.img = `${IMG_DIR}/${id}.webp`;
+        return;
+      }
+      const opt = await optimizeImage(remote);
+      if (!opt) {
+        failedImg++;
+        return; // keep the remote URL as a fallback
+      }
+      await writeImage(id, opt.data);
+      downloaded++;
+      it.img = `${IMG_DIR}/${id}.webp`;
+      it.blur = opt.blur;
+      it.col = opt.col;
+      it.iw = opt.width;
+      it.ih = opt.height;
+    }),
+    8
   );
 
-  const payload = {
-    updatedAt: new Date().toISOString(),
-    sources: status,
-    items: final,
-  };
+  final.forEach((it, index) => {
+    if (index >= 60) delete it.blur;
+  });
+
+  const prunedImg = await pruneImages(keepImg);
+  console.log(`\nتصاویر: ${downloaded} تازه، ${failedImg} ناموفق، ${prunedImg} پاک شد`);
+
+  // ---- static article pages (SEO) ----
+  const nameOf = new Map(status.map((s) => [s.id, s.name]));
+  await mkdir(PAGE_DIR, { recursive: true });
+  const keepPages = new Set();
+  let pages = 0;
+
+  for (const it of final) {
+    if (!it.f) continue;
+    keepPages.add(it.i);
+    const art = it._art || (await readArticle(it.i));
+    if (!art) continue;
+    const html = articlePage({
+      item: it,
+      art: { ...art, img: it.img || art.img, iw: it.iw, ih: it.ih },
+      sourceName: nameOf.get(it.s) || "",
+    });
+    await mkdir(join(PAGE_DIR, it.i), { recursive: true });
+    await writeFile(join(PAGE_DIR, it.i, "index.html"), html, "utf8");
+    pages++;
+  }
+
+  // drop pages for articles that fell off the list
+  try {
+    for (const dir of await readdir(PAGE_DIR)) {
+      if (keepPages.has(dir)) continue;
+      await unlink(join(PAGE_DIR, dir, "index.html")).catch(() => {});
+      await rm(join(PAGE_DIR, dir), { recursive: true, force: true }).catch(() => {});
+    }
+  } catch { /* first run */ }
+
+  for (const it of final) delete it._art;
+
+  const updatedAt = new Date().toISOString();
+  const payload = { updatedAt, sources: status, items: final };
 
   await mkdir("data", { recursive: true });
   await writeFile(NEWS, JSON.stringify(payload), "utf8");
+  await writeFile("sitemap.xml", sitemap(final), "utf8");
+  await writeFile("robots.txt", robots, "utf8");
+  await writeFile("feed.xml", rssFeed(final, status, updatedAt), "utf8");
 
   const full = final.filter((i) => i.f).length;
   console.log(
-    `\nنوشته شد: ${final.length} تیتر از ${status.filter((s) => s.ok).length}/${SOURCES.length} منبع — ${full} با متن کامل`
+    `نوشته شد: ${final.length} تیتر از ${status.filter((s) => s.ok).length}/${SOURCES.length} منبع — ${full} با متن کامل — ${pages} صفحهٔ ثابت`
   );
 }
 

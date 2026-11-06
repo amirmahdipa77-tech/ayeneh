@@ -183,11 +183,41 @@
   }
 
   const imgOf = (it) => (typeof it.img === "string" ? it.img : "");
+  const blurOf = (it) => (typeof it.blur === "string" && it.blur.startsWith("data:") ? it.blur : "");
+
+  /** Placeholder for the image box: tiny blur if we have it, else the average colour. */
+  function bgStyle(it) {
+    const blur = blurOf(it);
+    if (blur) return ` style="background-image:url('${blur}')"`;
+    const col = typeof it.col === "string" && /^#[0-9a-f]{6}$/i.test(it.col) ? it.col : "";
+    return col ? ` style="background-color:${col}"` : "";
+  }
+
+  const PAGE_BASE = new URL("./", location.href).href;
+  const shareUrl = (it) => `${PAGE_BASE}a/${it.i}/`;
+
+  /** One <img> with fixed dimensions (no layout shift), a blurred underlay and lazy loading. */
+  function imgHTML(it, { eager = false, priority = false } = {}) {
+    const src = imgOf(it);
+    if (!src) return "";
+    const w = Number(it.iw) || 640;
+    const h = Number(it.ih) || 400;
+    return `<img src="${esc(src)}" alt="" width="${w}" height="${h}" decoding="async" ${
+      eager ? 'loading="eager"' : 'loading="lazy"'
+    }${priority ? ' fetchpriority="high"' : ""} referrerpolicy="no-referrer">`;
+  }
+
+  const prefetched = new Set();
+  function prefetchArticle(it) {
+    if (!it || !it.f || prefetched.has(it.i)) return;
+    prefetched.add(it.i);
+    fetch(`data/articles/${it.i}.json`, { cache: "force-cache" }).catch(() => {});
+  }
 
   function heroHTML(it) {
     return `<a class="hero" href="#/a/${it.i}" data-id="${it.i}">
-      <div class="hero-media">
-        <img src="${esc(imgOf(it))}" alt="" loading="eager" decoding="async" referrerpolicy="no-referrer">
+      <div class="hero-media"${bgStyle(it)}>
+        ${imgHTML(it, { eager: true, priority: true })}
       </div>
       <div class="hero-text">
         ${metaHTML(it, true)}
@@ -198,7 +228,7 @@
 
   function cardHTML(it) {
     const thumb = imgOf(it)
-      ? `<div class="thumb"><img src="${esc(imgOf(it))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>`
+      ? `<div class="thumb"${bgStyle(it)}>${imgHTML(it)}</div>`
       : "";
     return `<a class="card" href="#/a/${it.i}" data-id="${it.i}">
       <div class="card-text">
@@ -212,7 +242,7 @@
 
   function wideHTML(it) {
     return `<a class="card-wide" href="#/a/${it.i}" data-id="${it.i}">
-      <div class="wide-media"><img src="${esc(imgOf(it))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>
+      <div class="wide-media"${bgStyle(it)}>${imgHTML(it)}</div>
       <div class="wide-text">
         ${metaHTML(it)}
         <h3>${esc(it.t)}</h3>
@@ -429,7 +459,7 @@
 
   function articleHTML(it) {
     const img = imgOf(it)
-      ? `<div class="reader-hero"><img src="${esc(imgOf(it))}" alt="" decoding="async" referrerpolicy="no-referrer"></div>`
+      ? `<div class="reader-hero"${bgStyle(it)}>${imgHTML(it, { eager: true, priority: true })}</div>`
       : "";
     return `${img}
       <div class="reader-inner">
@@ -470,6 +500,7 @@
     }
 
     document.body.style.overflow = "hidden";
+    document.title = `${it.t.slice(0, 60)} — آینه`;
 
     // load the full body
     if (it.f) {
@@ -523,6 +554,7 @@
     else if (location.hash.startsWith("#/a/")) history.replaceState(null, "", location.pathname);
     readerEl.classList.remove("open");
     document.body.style.overflow = "";
+    document.title = "آینه — تیترهای خبر ایران و جهان";
     state.reader = null;
     setTimeout(() => { if (!state.reader) readerEl.hidden = true; }, 440);
   }
@@ -532,11 +564,12 @@
   $("#reader-share").addEventListener("click", async () => {
     const it = state.reader;
     if (!it) return;
+    const url = shareUrl(it);
     if (navigator.share) {
-      try { await navigator.share({ title: it.t, url: it.u }); } catch { /* cancelled */ }
+      try { await navigator.share({ title: it.t, url }); } catch { /* cancelled */ }
     } else {
       try {
-        await navigator.clipboard.writeText(it.u);
+        await navigator.clipboard.writeText(url);
         toast("لینک کپی شد");
       } catch { toast("کپی نشد"); }
     }
@@ -570,6 +603,18 @@
     if (dragY > 130) closeReader(true);
     dragStart = null;
   }, { passive: true });
+
+  /* warm the article JSON as soon as a finger lands on a card */
+  feedEl.addEventListener("pointerdown", (e) => {
+    const card = e.target.closest("[data-id]");
+    if (!card) return;
+    prefetchArticle(state.items.find((x) => x.i === card.dataset.id));
+  }, { passive: true, capture: true });
+
+  feedEl.addEventListener("pointerenter", (e) => {
+    const card = e.target.closest?.("[data-id]");
+    if (card) prefetchArticle(state.items.find((x) => x.i === card.dataset.id));
+  }, { passive: true, capture: true });
 
   /* delegate card clicks */
   document.addEventListener("click", (e) => {
@@ -795,6 +840,9 @@
 
       refreshList();
       renderFoot();
+
+      // quietly warm the first few articles once the feed is on screen
+      setTimeout(() => state.list.slice(0, 3).forEach(prefetchArticle), 1200);
 
       // deep link
       const m = location.hash.match(/^#\/a\/(.+)$/);

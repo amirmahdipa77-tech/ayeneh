@@ -24,7 +24,7 @@
   --accent: #e0442b;
   --accent-soft: rgba(224, 68, 43, .1);
   --shadow-s: 0 1px 2px rgba(16, 20, 19, .05), 0 1px 3px rgba(16, 20, 19, .04);
-  --shadow-m: 0 6px 24px -8px rgba(16, 20, 19, .18), 0 2px 8px -4px rgba(16, 20, 19, .1);
+  --shadow-m: 0 4px 16px -8px rgba(16, 20, 19, .16);
   --shadow-l: 0 -12px 40px -12px rgba(16, 20, 19, .25);
   --r-s: 12px;
   --r-m: 18px;
@@ -51,7 +51,7 @@
     --accent: #ff6b4a;
     --accent-soft: rgba(255, 107, 74, .14);
     --shadow-s: 0 1px 2px rgba(0, 0, 0, .4);
-    --shadow-m: 0 8px 28px -10px rgba(0, 0, 0, .7);
+    --shadow-m: 0 4px 18px -8px rgba(0, 0, 0, .65);
     --shadow-l: 0 -14px 44px -14px rgba(0, 0, 0, .8);
   }
 }
@@ -109,12 +109,9 @@ svg {
   top: 0;
   z-index: 30;
   padding-top: env(safe-area-inset-top);
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  background-color: var(--bg);
-  backdrop-filter: saturate(1.6) blur(18px);
-  -webkit-backdrop-filter: saturate(1.6) blur(18px);
+  background: var(--bg);
   border-bottom: 1px solid transparent;
-  transition: border-color .2s, background .2s;
+  transition: border-color .18s;
 }
 .appbar.scrolled { border-bottom-color: var(--line); }
 
@@ -305,6 +302,8 @@ svg {
 /* hero card */
 .hero {
   position: relative;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
   display: block;
   border-radius: var(--r-xl);
   overflow: hidden;
@@ -351,6 +350,8 @@ svg {
 
 /* row card */
 .card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 132px;
   display: flex;
   gap: 12px;
   align-items: stretch;
@@ -359,7 +360,7 @@ svg {
   text-decoration: none;
   color: inherit;
   position: relative;
-  animation: rise .4s var(--spring) both;
+  animation: rise .3s var(--spring) both;
 }
 .card:active { background: var(--bg-soft); border-radius: var(--r-m); }
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
@@ -384,6 +385,19 @@ svg {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 
+.thumb, .hero-media, .wide-media, .reader-hero {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.thumb img, .hero-media img, .wide-media img, .reader-hero img {
+  opacity: 0;
+  transition: opacity .32s ease;
+}
+.thumb img.loaded, .hero-media img.loaded, .wide-media img.loaded, .reader-hero img.loaded {
+  opacity: 1;
+}
+
 .thumb {
   width: 96px;
   flex: none;
@@ -398,10 +412,7 @@ svg {
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
-  opacity: 0;
-  transition: opacity .4s var(--ease);
 }
-.thumb img.loaded { opacity: 1; }
 .thumb .fallback {
   position: absolute; inset: 0;
   display: grid; place-items: center;
@@ -413,6 +424,8 @@ svg {
 
 /* wide card */
 .card-wide {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
   display: block;
   text-decoration: none;
   color: inherit;
@@ -666,9 +679,7 @@ svg {
 .pill {
   appearance: none;
   border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: blur(14px) saturate(1.4);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  background: var(--surface);
   color: var(--ink);
   font: inherit;
   font-size: 14px;
@@ -707,8 +718,7 @@ svg {
   position: fixed;
   inset: 0;
   z-index: 70;
-  background: rgba(8, 10, 9, .45);
-  backdrop-filter: blur(2px);
+  background: rgba(8, 10, 9, .5);
   opacity: 0;
   transition: opacity .26s;
 }

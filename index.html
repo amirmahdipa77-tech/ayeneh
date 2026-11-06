@@ -3,25 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
-<title>آینه — خبر ایران و جهان</title>
-<meta name="description" content="آینه: تیترهای تازه خبرگزاری‌های ایران و جهان در یک اپ سبک و سریع، با متن کامل و ترجمه.">
+<title>آینه — تیترهای خبر ایران و جهان</title>
+<meta name="description" content="آینه: تیترهای تازه خبرگزاری‌های ایران و جهان در یک صفحهٔ سبک و سریع — با متن کامل خبر، عکس، دسته‌بندی و ترجمهٔ فوری.">
+<meta name="keywords" content="اخبار ایران, خبرگزاری, تیتر اخبار, اخبار جهان, ایرنا, ایسنا, مهر, بی‌بی‌سی فارسی">
+<meta name="author" content="آینه">
+<meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f7f7f5" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b0d0c" media="(prefers-color-scheme: dark)">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://amirmahdipa77-tech.github.io/ayeneh/">
+
 <meta property="og:type" content="website">
-<meta property="og:title" content="آینه — خبر ایران و جهان">
+<meta property="og:site_name" content="آینه">
+<meta property="og:title" content="آینه — تیترهای خبر ایران و جهان">
 <meta property="og:description" content="تیترهای تازه خبرگزاری‌های ایران و جهان، با متن کامل و ترجمه.">
+<meta property="og:url" content="https://amirmahdipa77-tech.github.io/ayeneh/">
+<meta property="og:image" content="https://amirmahdipa77-tech.github.io/ayeneh/icons/icon-512.png">
 <meta property="og:locale" content="fa_IR">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='26' fill='%23e0442b'/><circle cx='50' cy='50' r='19' fill='none' stroke='white' stroke-width='9'/></svg>">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="آینه — تیترهای خبر ایران و جهان">
+<meta name="twitter:description" content="تیترهای تازه خبرگزاری‌های ایران و جهان، با متن کامل و ترجمه.">
+<meta name="twitter:image" content="https://amirmahdipa77-tech.github.io/ayeneh/icons/icon-512.png">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-64.png" sizes="64x64" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="آینه" href="feed.xml">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "آینه",
+  "alternateName": "Ayeneh",
+  "url": "https://amirmahdipa77-tech.github.io/ayeneh/",
+  "inLanguage": "fa",
+  "description": "تیترهای تازه خبرگزاری‌های ایران و جهان، با متن کامل و ترجمه.",
+  "publisher": { "@type": "Organization", "name": "آینه" }
+}
+</script>
 </head>
 <body>
 
 <div class="app" id="app">
 
-  <!-- ───────────────── list view ───────────────── -->
   <header class="appbar" id="appbar">
     <div class="appbar-row">
       <div class="brand">
@@ -61,7 +89,6 @@
 
   <footer class="foot" id="foot"></footer>
 
-  <!-- ───────────────── reader view ───────────────── -->
   <section class="reader" id="reader" hidden aria-modal="true" role="dialog">
     <div class="reader-bar" id="reader-bar">
       <button class="icon-btn" id="reader-back" type="button" aria-label="بازگشت">
@@ -87,7 +114,6 @@
     </div>
   </section>
 
-  <!-- ───────────────── sheets ───────────────── -->
   <div class="scrim" id="scrim" hidden></div>
 
   <div class="sheet" id="sheet-filter" hidden role="dialog" aria-label="فیلتر منابع">
@@ -107,6 +133,17 @@
 
   <div class="toast" id="toast" hidden></div>
 </div>
+
+<noscript>
+  <div style="max-width:680px;margin:0 auto;padding:24px 18px;font-family:Tahoma,sans-serif;line-height:1.9">
+    <h2>آینه — تیترهای خبر ایران و جهان</h2>
+    <p>برای دیدن فهرست کامل به جاوااسکریپت نیاز است، اما می‌توانید از این آدرس‌ها استفاده کنید:</p>
+    <ul>
+      <li><a href="feed.xml">خوراک RSS تیترها</a></li>
+      <li><a href="sitemap.xml">نقشهٔ سایت (همهٔ خبرها)</a></li>
+    </ul>
+  </div>
+</noscript>
 
 <script src="assets/app.js" defer></script>
 </body>
