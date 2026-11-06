@@ -145,7 +145,9 @@
     state.tab = id;
     $$(".tab", tabsEl).forEach((b) => b.setAttribute("aria-selected", String(b.dataset.id === id)));
     moveIndicator(btn || $(`.tab[data-id="${id}"]`, tabsEl));
-    btn?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    try {
+      btn?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    } catch { /* older engines */ }
     haptic();
     window.scrollTo({ top: 0, behavior: "smooth" });
     refreshList();
@@ -180,10 +182,12 @@
     </div>`;
   }
 
+  const imgOf = (it) => (typeof it.img === "string" ? it.img : "");
+
   function heroHTML(it) {
     return `<a class="hero" href="#/a/${it.i}" data-id="${it.i}">
       <div class="hero-media">
-        <img src="${esc(it.img)}" alt="" loading="eager" decoding="async" referrerpolicy="no-referrer">
+        <img src="${esc(imgOf(it))}" alt="" loading="eager" decoding="async" referrerpolicy="no-referrer">
       </div>
       <div class="hero-text">
         ${metaHTML(it, true)}
@@ -193,8 +197,8 @@
   }
 
   function cardHTML(it) {
-    const thumb = it.img
-      ? `<div class="thumb"><img src="${esc(it.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>`
+    const thumb = imgOf(it)
+      ? `<div class="thumb"><img src="${esc(imgOf(it))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>`
       : "";
     return `<a class="card" href="#/a/${it.i}" data-id="${it.i}">
       <div class="card-text">
@@ -208,7 +212,7 @@
 
   function wideHTML(it) {
     return `<a class="card-wide" href="#/a/${it.i}" data-id="${it.i}">
-      <div class="wide-media"><img src="${esc(it.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>
+      <div class="wide-media"><img src="${esc(imgOf(it))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>
       <div class="wide-text">
         ${metaHTML(it)}
         <h3>${esc(it.t)}</h3>
@@ -222,8 +226,8 @@
     if (!slice.length) return;
     const html = slice.map((it, k) => {
       const index = state.shown + k;
-      if (index === 0 && it.img) return heroHTML(it);
-      if (it.img && index % 9 === 0) return wideHTML(it);
+      if (index === 0 && imgOf(it)) return heroHTML(it);
+      if (imgOf(it) && index % 9 === 0) return wideHTML(it);
       return cardHTML(it);
     }).join("");
     feedEl.insertAdjacentHTML("beforeend", html);
@@ -410,8 +414,8 @@
   const progressEl = $("#reader-progress");
 
   function articleHTML(it) {
-    const img = it.img
-      ? `<div class="reader-hero"><img src="${esc(it.img)}" alt="" decoding="async" referrerpolicy="no-referrer"></div>`
+    const img = imgOf(it)
+      ? `<div class="reader-hero"><img src="${esc(imgOf(it))}" alt="" decoding="async" referrerpolicy="no-referrer"></div>`
       : "";
     return `${img}
       <div class="reader-inner">

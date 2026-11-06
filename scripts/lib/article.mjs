@@ -151,20 +151,24 @@ export function parseHtml(html, url) {
     return { ok: false, error: "no body", img: ogImage, by: author.slice(0, 60) };
   }
 
+  const byline = /\||خبرگزاری|اخبار ایران و جهان|news agency/i.test(author) || author.length > 40
+    ? ""
+    : author.slice(0, 60);
+
   return {
     ok: true,
     img: ogImage,
-    by: author.slice(0, 60),
+    by: byline,
     published: published || "",
     text: paragraphs,
     chars: text.length,
   };
 }
 
-export async function extractArticle(url, { timeout = 15000 } = {}) {
+export async function extractArticle(url, { timeout = 15000, headers = {} } = {}) {
   let html;
   try {
-    html = await fetchText(url, { timeout });
+    html = await fetchText(url, { timeout, headers });
   } catch (err) {
     return { ok: false, error: err.message, status: err.status || 0 };
   }

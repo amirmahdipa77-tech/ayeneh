@@ -24,8 +24,8 @@ const ART_DIR = "data/articles";
 const PER_SOURCE = 40;
 const MAX_ITEMS = 900;
 const MAX_KEEP_HOURS = 12;
-const EXTRACT_LIMIT = Number(process.env.EXTRACT_LIMIT || 90);
-const EXTRACT_CONCURRENCY = 6;
+const EXTRACT_LIMIT = Number(process.env.EXTRACT_LIMIT || 220);
+const EXTRACT_CONCURRENCY = 10;
 const EXTRACT_TIMEOUT = 15000;
 
 /* ------------------------------------------------------------------ */
@@ -82,8 +82,6 @@ const SOURCES = [
     feeds: ["https://iranwire.com/fa/feed/"] },
   { id: "kayhanlondon", name: "کیهان لندن", home: "https://kayhan.london", scope: "world", cat: "world",
     feeds: ["https://kayhan.london/fa/feed/"] },
-  { id: "dwfa", name: "دویچه‌وله فارسی", home: "https://www.dw.com/fa-ir", scope: "world", cat: "world",
-    feeds: ["https://rss.dw.com/xml/rss-fa-all", "https://rss.dw.com/rdf/rss-fa-all"] },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -233,6 +231,11 @@ async function pool(tasks, limit) {
   return results;
 }
 
+function sourceHeaders(id) {
+  const src = SOURCES.find((s) => s.id === id);
+  return src?.headers || {};
+}
+
 async function existingArticles() {
   try {
     const files = await readdir(ART_DIR);
@@ -280,9 +283,16 @@ async function main() {
     if (!items.length) {
       failures++;
       const cutoff = Date.now() - MAX_KEEP_HOURS * 3600e3;
-      items = (previous.items || []).filter(
-        (it) => it.s === source.id && it.d && Date.parse(it.d) > cutoff
-      );
+      items = (previous.items || [])
+        .filter((it) => it.s === source.id && it.d && Date.parse(it.d) > cutoff)
+        .map((it) => ({
+          i: it.i || shortHash(it.u),
+          t: it.t, u: it.u, s: it.s, d: it.d,
+          x: it.x || "",
+          img: it.img || "",
+          c: it.c || classify(source, it.t),
+          f: it.f || 0,
+        }));
       console.log(`✗ ${source.name}: ${value.errors.join(" | ") || "empty"} (kept ${items.length})`);
     } else {
       console.log(`✓ ${source.name}: ${items.length} via ${value.feed}`);
@@ -329,7 +339,7 @@ async function main() {
   const perSource = {};
   const extracted = await pool(
     wanted.map((it) => async () => {
-      const res = await extractArticle(it.u, { timeout: EXTRACT_TIMEOUT });
+      const res = await extractArticle(it.u, { timeout: EXTRACT_TIMEOUT, headers: sourceHeaders(it.s) });
       const bucket = (perSource[it.s] ||= { ok: 0, fail: 0 });
       if (!res.ok) {
         bucket.fail++;
