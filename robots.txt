@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://amirmahdipa77-tech.github.io/ayeneh/sitemap.xml
