@@ -73,16 +73,27 @@
 
   /* ───────── my ip ───────── */
 
-  const IP_FIELDS = [
-    ["کشور", (d) => d.country],
-    ["شهر", (d) => d.city],
-    ["ISP", (d) => d.isp],
-    ["ASN", (d) => d.asn],
-    ["منطقهٔ زمانی", (d) => d.tz],
+  const FACTS = [
     ["مختصات", (d) => (d.lat != null ? `${(+d.lat).toFixed(3)}, ${(+d.lon).toFixed(3)}` : "")],
+    ["منطقهٔ زمانی", (d) => d.tz],
+    ["استان", (d) => d.region],
     ["شبکه", (d) => d.network],
+    ["کد پستی", (d) => d.postal],
     ["ارز", (d) => d.currency],
   ];
+
+  /** Persian country names straight from the platform — no lookup table. */
+  const regionNames = (() => {
+    try { return new Intl.DisplayNames(["fa"], { type: "region" }); } catch { return null; }
+  })();
+
+  function countryFa(code, fallback) {
+    try {
+      const name = regionNames?.of(code);
+      if (name && name !== code) return name;
+    } catch { /* unknown code */ }
+    return fallback || "—";
+  }
 
   function normalizeWho(d) {
     return {
@@ -117,30 +128,41 @@
 
   function renderIp(d) {
     state.ip = d;
+
+    const name = countryFa(d.code, d.country);
+    $("#country").textContent = name;
+
+    const flag = $("#flag");
+    if (d.code) {
+      const cc = String(d.code).toLowerCase();
+      flag.hidden = false;
+      flag.src = `https://flagcdn.com/w80/${cc}.png`;
+      flag.srcset = `https://flagcdn.com/w160/${cc}.png 2x`;
+      flag.alt = name;
+      flag.onerror = () => { flag.hidden = true; };
+    } else {
+      flag.hidden = true;
+    }
+
     $("#my-ip").textContent = d.ip || "—";
+    $("#ip-meta").textContent = [d.city, d.isp || d.org, d.asn].filter(Boolean).join("  ·  ");
 
-    const where = [d.city, d.region, d.country].filter(Boolean).join("، ");
-    $("#ip-sub").innerHTML = [
-      d.code ? `<span class="cc mono">${d.code}</span>` : "",
-      where ? `<span>${where}</span>` : "",
-      d.org ? `<span style="color:var(--faint)">·</span><span class="mono" style="font-size:12.5px">${d.org}</span>` : "",
-    ].join("");
-
-    $("#ip-grid").innerHTML = IP_FIELDS.map(([label, get]) => {
-      const value = get(d) || "—";
-      return `<div><dt>${label}</dt><dd title="${String(value).replace(/"/g, "&quot;")}">${value}</dd></div>`;
-    }).join("");
+    $("#facts").innerHTML = FACTS
+      .map(([label, get]) => [label, get(d) || ""])
+      .filter(([, v]) => v)
+      .map(([label, value]) => `<div><dt>${label}</dt><dd title="${String(value).replace(/"/g, "&quot;")}">${value}</dd></div>`)
+      .join("");
 
     $("#map-link").href = d.lat != null
       ? `https://www.openstreetmap.org/?mlat=${d.lat}&mlon=${d.lon}#map=11/${d.lat}/${d.lon}`
       : "#";
     $("#ip-provider").textContent = state.provider;
-    $("#ip-v6").textContent = state.v6 ? `IPv6: ${state.v6}` : "";
+    $("#ip-v6").textContent = state.v6 ? `IPv6 · ${state.v6}` : "";
   }
 
   async function loadIp() {
     $("#reload-ip").classList.add("spin");
-    $("#ip-sub").innerHTML = `<span class="skeleton-line"></span>`;
+    $("#ip-meta").innerHTML = `<span class="skeleton-line"></span>`;
     try {
       let d = null;
       try {
@@ -164,7 +186,7 @@
       }
 
       if (!d) {
-        $("#ip-sub").textContent = "دریافت آی‌پی ممکن نشد — اتصال یا مسدودسازی مرورگر را بررسی کنید.";
+        $("#ip-meta").textContent = "دریافت آی‌پی ممکن نشد — اتصال را بررسی کنید.";
         return;
       }
       renderIp(d);
@@ -259,7 +281,7 @@
       const rows = [
         ["IP", data.ip],
         ["نوع", data.type],
-        ["کشور", [data.country, data.code].filter(Boolean).join(" · ")],
+        ["کشور", [countryFa(data.code, data.country), data.code].filter(Boolean).join(" · ")],
         ["استان", data.region],
         ["شهر", data.city],
         ["کد پستی", data.postal],
@@ -275,11 +297,11 @@
       out.innerHTML = `
         ${note ? `<p class="out-line">${note}</p>` : ""}
         ${resultTable(rows)}
-        <div class="row" style="margin-top:10px">
-          <a class="btn btn-sm" href="https://www.openstreetmap.org/?mlat=${data.lat}&mlon=${data.lon}#map=11/${data.lat}/${data.lon}"
+        <div class="hero-tools" style="margin-top:10px">
+          <a class="tbtn" href="https://www.openstreetmap.org/?mlat=${data.lat}&mlon=${data.lon}#map=11/${data.lat}/${data.lon}"
              target="_blank" rel="noopener">نقشه</a>
-          <button class="btn btn-sm" id="lookup-copy" type="button">کپی JSON</button>
-          <span class="hint">${provider}</span>
+          <button class="tbtn" id="lookup-copy" type="button">کپی JSON</button>
+          <span class="src-tag">${provider}</span>
         </div>`;
 
       $("#lookup-copy").addEventListener("click", () => copy(JSON.stringify(data, null, 2), "JSON کپی شد"));
@@ -323,8 +345,8 @@
         <dl class="kv">${answers.map((a) => `
           <dt class="mono">${type} · ${a.TTL}s</dt>
           <dd>${String(a.data).replace(/</g, "&lt;")}</dd>`).join("")}</dl>
-        <div class="row" style="margin-top:10px">
-          <button class="btn btn-sm" id="dns-copy" type="button">کپی JSON</button>
+        <div class="hero-tools" style="margin-top:10px">
+          <button class="tbtn" id="dns-copy" type="button">کپی JSON</button>
         </div>`;
       $("#dns-copy").addEventListener("click", () => copy(JSON.stringify(data, null, 2), "JSON کپی شد"));
     } catch (err) {

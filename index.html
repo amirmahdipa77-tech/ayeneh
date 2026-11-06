@@ -8,8 +8,8 @@
 <meta name="keywords" content="آی پی من, ip location, جستجوی ip, dns lookup, ابزار برنامه نویس, json formatter, base64, jwt decoder">
 <meta name="author" content="DevKit">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0c0c0c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://amirmahdipa77-tech.github.io/ayeneh/">
 
@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://flagcdn.com" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
 
 <script type="application/ld+json">
@@ -49,98 +50,77 @@
   <div class="bar-in">
     <a class="brand" href="./" aria-label="DevKit">
       <span class="mark" aria-hidden="true"><span>&gt;</span><i>_</i></span>
-      <span class="brand-name">devkit</span>
     </a>
     <nav class="nav" aria-label="بخش‌ها">
-      <a href="#net" class="nav-a">شبکه</a>
-      <a href="#tools" class="nav-a">ابزارها</a>
-      <a href="#device" class="nav-a">دستگاه</a>
+      <a href="#net">شبکه</a>
+      <a href="#tools">ابزارها</a>
+      <a href="#device">دستگاه</a>
     </nav>
-    <div class="bar-actions">
-      <button class="icon-btn" id="btn-theme" type="button" aria-label="تغییر پوسته">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2Z"/></svg>
-      </button>
-    </div>
+    <button class="icon-btn" id="btn-theme" type="button" aria-label="تغییر پوسته">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2Z"/></svg>
+    </button>
   </div>
 </header>
 
 <main>
 
-  <!-- ══════════ hero: your ip ══════════ -->
-  <section id="net" class="sec">
-    <div class="ip-card" id="ip-card">
-      <div class="ip-card-head">
-        <span class="k">آی‌پی شما</span>
-        <span class="src-tag" id="ip-provider"></span>
-      </div>
-
-      <div class="ip-main">
-        <span class="ip-value mono" id="my-ip">—</span>
-        <button class="btn btn-icon" id="copy-ip" type="button" title="کپی آی‌پی">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>
-        </button>
-        <button class="btn btn-icon" id="reload-ip" type="button" title="تازه‌سازی">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
-        </button>
-      </div>
-
-      <div class="ip-sub" id="ip-sub"><span class="skeleton-line"></span></div>
-
-      <dl class="grid-4" id="ip-grid"></dl>
-
-      <div class="ip-foot">
-        <a class="btn btn-sm" id="map-link" href="#" target="_blank" rel="noopener">نمایش روی نقشه</a>
-        <button class="btn btn-sm" id="copy-json" type="button">کپی JSON</button>
-        <span class="hint" id="ip-v6"></span>
-      </div>
+  <!-- ════════ you ════════ -->
+  <section id="net" class="hero">
+    <div class="hero-country">
+      <img id="flag" class="flag" alt="" width="52" height="39" hidden>
+      <h1 id="country">—</h1>
     </div>
 
-    <!-- lookup -->
-    <div class="panel">
-      <div class="panel-head">
-        <h2>جست‌وجوی آی‌پی یا دامنه</h2>
-        <p>هر IPv4، IPv6 یا دامنه را بده؛ اگر دامنه باشد اول با DNS حل می‌شود.</p>
-      </div>
-      <form class="row" id="lookup-form">
-        <input id="lookup-input" class="input mono" type="text" inputmode="url" autocomplete="off" spellcheck="false"
-               placeholder="8.8.8.8  یا  example.com" dir="ltr" required>
-        <button class="btn btn-primary" type="submit">بررسی</button>
-      </form>
-      <div id="lookup-out" class="out" hidden></div>
-      <div class="chips" id="lookup-samples">
-        <button class="chip" type="button" data-ip="8.8.8.8">8.8.8.8</button>
-        <button class="chip" type="button" data-ip="1.1.1.1">1.1.1.1</button>
-        <button class="chip" type="button" data-ip="185.55.225.1">185.55.225.1</button>
-        <button class="chip" type="button" data-ip="2001:4860:4860::8888">IPv6</button>
-        <button class="chip" type="button" data-ip="digikala.com">digikala.com</button>
-      </div>
+    <p class="hero-ip mono" id="my-ip">—</p>
+    <p class="hero-meta" id="ip-meta"></p>
+
+    <div class="hero-tools">
+      <button class="tbtn" id="copy-ip" type="button">کپی</button>
+      <button class="tbtn" id="copy-json" type="button">JSON</button>
+      <a class="tbtn" id="map-link" href="#" target="_blank" rel="noopener">نقشه</a>
+      <button class="tbtn" id="reload-ip" type="button">تازه‌سازی</button>
+      <span class="src-tag" id="ip-provider"></span>
     </div>
 
-    <!-- dns -->
-    <div class="panel">
-      <div class="panel-head">
-        <h2>رکوردهای DNS</h2>
-        <p>از طریق DNS-over-HTTPS کلادفلر، مستقیم از مرورگر.</p>
-      </div>
-      <form class="row" id="dns-form">
-        <input id="dns-input" class="input mono" type="text" autocomplete="off" spellcheck="false"
-               placeholder="example.com" dir="ltr" value="github.com" required>
-        <select id="dns-type" class="input select mono" aria-label="نوع رکورد">
-          <option>A</option><option>AAAA</option><option>MX</option>
-          <option>TXT</option><option>NS</option><option>CNAME</option><option>SOA</option><option>CAA</option>
-        </select>
-        <button class="btn btn-primary" type="submit">بگیر</button>
-      </form>
-      <div id="dns-out" class="out" hidden></div>
+    <dl class="facts" id="facts"></dl>
+    <p class="hero-v6 mono" id="ip-v6"></p>
+  </section>
+
+  <!-- ════════ lookup ════════ -->
+  <section class="sec">
+    <h2 class="sec-t">آی‌پی یا دامنه</h2>
+    <form class="row" id="lookup-form">
+      <input id="lookup-input" class="input mono" type="text" inputmode="url" autocomplete="off" spellcheck="false"
+             placeholder="8.8.8.8" dir="ltr" required>
+      <button class="btn" type="submit">بررسی</button>
+    </form>
+    <div id="lookup-out" class="out" hidden></div>
+    <div class="chips" id="lookup-samples">
+      <button class="chip" type="button" data-ip="8.8.8.8">8.8.8.8</button>
+      <button class="chip" type="button" data-ip="1.1.1.1">1.1.1.1</button>
+      <button class="chip" type="button" data-ip="2001:4860:4860::8888">IPv6</button>
+      <button class="chip" type="button" data-ip="digikala.com">digikala.com</button>
     </div>
   </section>
 
-  <!-- ══════════ tools ══════════ -->
+  <!-- ════════ dns ════════ -->
+  <section class="sec">
+    <h2 class="sec-t">DNS</h2>
+    <form class="row" id="dns-form">
+      <input id="dns-input" class="input mono" type="text" autocomplete="off" spellcheck="false"
+             placeholder="example.com" dir="ltr" value="github.com" required>
+      <select id="dns-type" class="input select mono" aria-label="نوع رکورد">
+        <option>A</option><option>AAAA</option><option>MX</option>
+        <option>TXT</option><option>NS</option><option>CNAME</option><option>SOA</option><option>CAA</option>
+      </select>
+      <button class="btn" type="submit">بگیر</button>
+    </form>
+    <div id="dns-out" class="out" hidden></div>
+  </section>
+
+  <!-- ════════ tools ════════ -->
   <section id="tools" class="sec">
-    <div class="sec-head">
-      <h2>جعبه‌ابزار</h2>
-      <p>همه‌چیز محلی و آفلاین اجرا می‌شود؛ هیچ داده‌ای جایی نمی‌رود.</p>
-    </div>
+    <h2 class="sec-t">ابزارها</h2>
 
     <div class="segmented" id="tool-tabs" role="tablist">
       <button class="seg" role="tab" aria-selected="true" data-tool="json">JSON</button>
@@ -153,108 +133,97 @@
     </div>
 
     <div class="tool" id="tool-json">
-      <div class="row row-top">
+      <div class="tool-bar">
         <span class="k">JSON</span>
-        <div class="row-actions">
-          <button class="btn btn-sm" data-act="json-format" type="button">مرتب‌سازی</button>
-          <button class="btn btn-sm" data-act="json-minify" type="button">فشرده</button>
-          <button class="btn btn-sm" data-act="json-clear" type="button">پاک</button>
+        <div class="tool-actions">
+          <button class="tbtn" data-act="json-format" type="button">مرتب</button>
+          <button class="tbtn" data-act="json-minify" type="button">فشرده</button>
+          <button class="tbtn" data-act="json-clear" type="button">پاک</button>
         </div>
       </div>
-      <textarea id="json-in" class="area mono" spellcheck="false" dir="ltr" placeholder='{"hello":"world","n":[1,2,3]}'></textarea>
+      <textarea id="json-in" class="area mono" spellcheck="false" dir="ltr" placeholder='{"hello":"world"}'></textarea>
       <div class="out-line" id="json-msg"></div>
     </div>
 
     <div class="tool" id="tool-base64" hidden>
-      <div class="row row-top">
-        <span class="k">Base64 / UTF-8</span>
-        <div class="row-actions">
-          <button class="btn btn-sm" data-act="b64-enc" type="button">کدگذاری</button>
-          <button class="btn btn-sm" data-act="b64-dec" type="button">کدگشایی</button>
-          <button class="btn btn-sm" data-act="b64-clear" type="button">پاک</button>
+      <div class="tool-bar">
+        <span class="k">Base64</span>
+        <div class="tool-actions">
+          <button class="tbtn" data-act="b64-enc" type="button">کدگذاری</button>
+          <button class="tbtn" data-act="b64-dec" type="button">کدگشایی</button>
+          <button class="tbtn" data-act="b64-clear" type="button">پاک</button>
         </div>
       </div>
-      <textarea id="b64-in" class="area mono" spellcheck="false" dir="ltr" placeholder="متن یا رشتهٔ base64…"></textarea>
+      <textarea id="b64-in" class="area mono" spellcheck="false" dir="ltr" placeholder="متن یا base64"></textarea>
       <div class="out-line" id="b64-msg"></div>
     </div>
 
     <div class="tool" id="tool-url" hidden>
-      <div class="row row-top">
-        <span class="k">URL encode / decode</span>
-        <div class="row-actions">
-          <button class="btn btn-sm" data-act="url-enc" type="button">کدگذاری</button>
-          <button class="btn btn-sm" data-act="url-dec" type="button">کدگشایی</button>
-          <button class="btn btn-sm" data-act="url-clear" type="button">پاک</button>
+      <div class="tool-bar">
+        <span class="k">URL</span>
+        <div class="tool-actions">
+          <button class="tbtn" data-act="url-enc" type="button">کدگذاری</button>
+          <button class="tbtn" data-act="url-dec" type="button">کدگشایی</button>
+          <button class="tbtn" data-act="url-clear" type="button">پاک</button>
         </div>
       </div>
-      <textarea id="url-in" class="area mono" spellcheck="false" dir="ltr" placeholder="https://example.com/?q=سلام&x=1"></textarea>
+      <textarea id="url-in" class="area mono" spellcheck="false" dir="ltr" placeholder="https://example.com/?q=سلام"></textarea>
       <div class="out-line" id="url-msg"></div>
     </div>
 
     <div class="tool" id="tool-hash" hidden>
-      <div class="row row-top">
-        <span class="k">SHA-1 / 256 / 384 / 512</span>
-        <div class="row-actions">
-          <button class="btn btn-sm" data-act="hash-clear" type="button">پاک</button>
-        </div>
+      <div class="tool-bar">
+        <span class="k">SHA</span>
+        <div class="tool-actions"><button class="tbtn" data-act="hash-clear" type="button">پاک</button></div>
       </div>
-      <textarea id="hash-in" class="area mono" spellcheck="false" dir="ltr" placeholder="متنی که باید هش شود…"></textarea>
-      <div class="kv" id="hash-out"></div>
+      <textarea id="hash-in" class="area area-sm mono" spellcheck="false" dir="ltr" placeholder="متن"></textarea>
+      <dl class="kv" id="hash-out"></dl>
     </div>
 
     <div class="tool" id="tool-jwt" hidden>
-      <div class="row row-top">
-        <span class="k">JWT decoder</span>
-        <div class="row-actions">
-          <button class="btn btn-sm" data-act="jwt-clear" type="button">پاک</button>
-        </div>
+      <div class="tool-bar">
+        <span class="k">JWT</span>
+        <div class="tool-actions"><button class="tbtn" data-act="jwt-clear" type="button">پاک</button></div>
       </div>
-      <textarea id="jwt-in" class="area mono" spellcheck="false" dir="ltr" placeholder="eyJhbGciOi…"></textarea>
+      <textarea id="jwt-in" class="area area-sm mono" spellcheck="false" dir="ltr" placeholder="eyJhbGciOi…"></textarea>
       <div class="out" id="jwt-out" hidden></div>
     </div>
 
     <div class="tool" id="tool-time" hidden>
-      <div class="row row-top">
-        <span class="k">Unix timestamp</span>
-        <div class="row-actions">
-          <button class="btn btn-sm" data-act="time-now" type="button">همین حالا</button>
-        </div>
+      <div class="tool-bar">
+        <span class="k">زمان</span>
+        <div class="tool-actions"><button class="tbtn" data-act="time-now" type="button">حالا</button></div>
       </div>
-      <input id="time-in" class="input mono" dir="ltr" placeholder="1762345678 یا 2026-11-06T08:00:00Z">
-      <div class="kv" id="time-out"></div>
+      <input id="time-in" class="input mono" dir="ltr" placeholder="1762345678">
+      <dl class="kv" id="time-out"></dl>
     </div>
 
     <div class="tool" id="tool-uuid" hidden>
-      <div class="row row-top">
+      <div class="tool-bar">
         <span class="k">UUID v4</span>
-        <div class="row-actions">
+        <div class="tool-actions">
           <input id="uuid-count" class="input input-tiny mono" type="number" min="1" max="50" value="5" aria-label="تعداد">
-          <button class="btn btn-sm" data-act="uuid-gen" type="button">تولید</button>
+          <button class="tbtn" data-act="uuid-gen" type="button">تولید</button>
         </div>
       </div>
       <pre class="code mono" id="uuid-out" dir="ltr"></pre>
     </div>
   </section>
 
-  <!-- ══════════ device ══════════ -->
+  <!-- ════════ device ════════ -->
   <section id="device" class="sec">
-    <div class="sec-head">
-      <h2>دستگاه و مرورگر</h2>
-      <p>چیزهایی که مرورگر شما دربارهٔ خودش لو می‌دهد.</p>
-    </div>
-    <dl class="kv" id="device-out"></dl>
+    <h2 class="sec-t">دستگاه</h2>
+    <dl class="kv kv-dense" id="device-out"></dl>
   </section>
 
 </main>
 
 <footer class="foot">
-  <div class="foot-in">
-    <span>devkit — ساخته‌شده روی GitHub Pages</span>
-    <span class="dot">·</span>
-    <span>آی‌پی و لوکیشن: <a href="https://ipwho.is" target="_blank" rel="noopener">ipwho.is</a></span>
-    <span class="dot">·</span>
-    <span>DNS: <a href="https://developers.cloudflare.com/1.1.1.1/" target="_blank" rel="noopener">Cloudflare DoH</a></span>
-  </div>
+  <span>devkit</span>
+  <span class="dot">·</span>
+  <a href="https://ipwho.is" target="_blank" rel="noopener">ipwho.is</a>
+  <span class="dot">·</span>
+  <a href="https://developers.cloudflare.com/1.1.1.1/" target="_blank" rel="noopener">cloudflare doh</a>
 </footer>
 
 <div class="toast" id="toast" hidden></div>
