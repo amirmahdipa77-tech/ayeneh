@@ -7,7 +7,7 @@
 <meta name="description" content="آی‌پی، کشور، شهر، اپراتور و موقعیت جغرافیایی شما در یک نگاه — سریع، بدون ثبت‌نام، مستقیم در مرورگر.">
 <meta name="author" content="DevKit">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#080808">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://amirmahdipa77-tech.github.io/ayeneh/">
 
@@ -45,27 +45,33 @@
 
 <div class="wrap">
 
-  <header class="flag-band" id="flag-band">
-    <img class="flag-img" id="flag" alt="" decoding="async" hidden>
-    <div class="flag-fallback" id="flag-fallback" hidden><span id="flag-code">··</span></div>
+  <header class="hero">
+    <img class="hero-img" id="flag" alt="" decoding="async" hidden>
+    <div class="hero-fallback" id="flag-fallback"><span id="flag-code">··</span></div>
   </header>
 
-  <main class="glass" id="glass" aria-live="polite">
+  <main class="info" aria-live="polite">
 
-    <h1 class="country" id="country">…</h1>
-    <p class="ip mono" id="my-ip">···</p>
-    <p class="meta" id="ip-meta"></p>
-    <p class="facts mono" id="facts"></p>
+    <div class="block">
+      <h1 class="country" id="country">…</h1>
+      <p class="ip mono" id="my-ip">···</p>
+      <p class="meta" id="ip-meta"></p>
+    </div>
+
+    <dl class="spec" id="spec"></dl>
 
     <div class="actions">
-      <button class="act" id="copy-ip" type="button">کپی</button>
+      <button class="act" id="copy-ip" type="button">کپی آی‌پی</button>
       <a class="act" id="map-link" href="#" target="_blank" rel="noopener">نقشه</a>
       <button class="act" id="reload" type="button">تازه‌سازی</button>
-      <span class="src" id="provider"></span>
     </div>
   </main>
 
-  <p class="sig">devkit</p>
+  <footer class="sig">
+    <span id="provider"></span>
+    <span class="sep">·</span>
+    <span>devkit</span>
+  </footer>
 </div>
 
 <div class="toast" id="toast" hidden></div>
