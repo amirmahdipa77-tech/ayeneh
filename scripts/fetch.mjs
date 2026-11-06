@@ -71,9 +71,6 @@ const SOURCES = [
   { id: "donya", name: "دنیای اقتصاد", home: "https://donya-e-eqtesad.com",
     feeds: ["https://donya-e-eqtesad.com/fa/rss", "https://donya-e-eqtesad.com/rss"] },
 
-  { id: "alef", name: "الف", home: "https://alef.ir",
-    feeds: ["https://alef.ir/rss", "https://www.alef.ir/rss"] },
-
   { id: "varzesh3", name: "ورزش سه", home: "https://www.varzesh3.com",
     feeds: ["https://www.varzesh3.com/rss/all"] },
 
@@ -196,7 +193,7 @@ function parseDate(raw) {
 /* fetching                                                            */
 /* ------------------------------------------------------------------ */
 
-async function fetchText(url, extra = {}) {
+async function fetchText(url, extra = {}, attempt = 1) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
@@ -210,7 +207,14 @@ async function fetchText(url, extra = {}) {
         ...extra,
       },
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      const retryable = res.status >= 500 || res.status === 429;
+      if (retryable && attempt < 3) {
+        await new Promise((r) => setTimeout(r, 1200 * attempt));
+        return await fetchText(url, extra, attempt + 1);
+      }
+      throw new Error(`HTTP ${res.status}`);
+    }
     const buf = Buffer.from(await res.arrayBuffer());
     const head = buf.subarray(0, 400).toString("latin1");
     let charset =
