@@ -488,7 +488,7 @@
     progressEl.style.width = "0%";
     $("#reader-actions").classList.remove("hide");
     $("#btn-original").hidden = true;
-    $("#btn-source").href = it.u;
+    $("#btn-source").href = it.u || shareUrl(it);
     $("#btn-translate").disabled = false;
     $("#btn-translate span").textContent = "ترجمه";
 
@@ -521,6 +521,7 @@
   function renderArticle(it, art) {
     const textEl = $("#r-text");
     if (!textEl) return;
+    if (art.u) $("#btn-source").href = art.u;
     const paras = (art.text || []).filter(Boolean);
     textEl.innerHTML = paras.map((p) => `<p>${esc(p)}</p>`).join("");
     if (art.img && !$(".reader-hero img")) {

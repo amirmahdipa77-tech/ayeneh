@@ -180,7 +180,7 @@ function parseFeed(xml, source) {
     seen.add(u);
 
     const raw = pick(block, ["description", "summary", "content:encoded", "content"]);
-    const excerpt = clip(clean(raw), 280);
+    const excerpt = clip(clean(raw), 200);
     const date = parseDate(pick(block, ["pubDate", "published", "updated", "dc:date", "date"]));
     const img = pickImage(block);
 
@@ -489,6 +489,12 @@ async function main() {
   } catch { /* first run */ }
 
   for (const it of final) delete it._art;
+
+  // the list file is downloaded on every visit: keep only what a card needs.
+  // full-text items carry their source URL inside the article JSON instead.
+  for (const it of final) {
+    if (it.f && it.u) delete it.u;
+  }
 
   const updatedAt = new Date().toISOString();
   const payload = { updatedAt, sources: status, items: final };
