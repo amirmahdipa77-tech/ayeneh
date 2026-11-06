@@ -209,11 +209,27 @@
     throw new Error("not found");
   }
 
+  /** DNS-over-HTTPS with a provider fallback (Cloudflare → Google). */
+  const DOH = [
+    (n, t) => `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(n)}&type=${encodeURIComponent(t)}`,
+    (n, t) => `https://dns.google/resolve?name=${encodeURIComponent(n)}&type=${encodeURIComponent(t)}`,
+  ];
+
   async function doh(name, type) {
-    const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${encodeURIComponent(type)}`;
-    const res = await fetch(url, { headers: { accept: "application/dns-json" }, cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
+    let lastErr;
+    for (const build of DOH) {
+      try {
+        const res = await fetch(build(name, type), {
+          headers: { accept: "application/dns-json" },
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    throw lastErr || new Error("DNS unavailable");
   }
 
   const DNS_STATUS = { 0: "NOERROR", 1: "FORMERR", 2: "SERVFAIL", 3: "NXDOMAIN", 5: "REFUSED" };
