@@ -7,7 +7,7 @@
 <meta name="description" content="آی‌پی، کشور، شهر، اپراتور و موقعیت جغرافیایی شما در یک نگاه — سریع، بدون ثبت‌نام، مستقیم در مرورگر.">
 <meta name="author" content="DevKit">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#080808">
+<meta name="theme-color" content="#070707">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://amirmahdipa77-tech.github.io/ayeneh/">
 
@@ -48,30 +48,41 @@
   <header class="hero">
     <img class="hero-img" id="flag" alt="" decoding="async" hidden>
     <div class="hero-fallback" id="flag-fallback"><span id="flag-code">··</span></div>
+    <div class="hero-shine"></div>
+    <div class="hero-shade"></div>
+    <div class="hero-grain"></div>
+
+    <div class="hero-top">
+      <span class="eyebrow"><i class="live"></i><span id="eyebrow">your ip</span></span>
+      <span class="cc mono" id="cc"></span>
+    </div>
   </header>
 
-  <main class="info" aria-live="polite">
+  <main class="content" aria-live="polite">
 
-    <div class="block">
-      <h1 class="country" id="country">…</h1>
-      <p class="ip mono" id="my-ip">···</p>
-      <p class="meta" id="ip-meta"></p>
-    </div>
+    <h1 class="country" id="country">…</h1>
+    <p class="ip mono" id="my-ip">···</p>
+    <p class="meta" id="ip-meta"></p>
 
     <dl class="spec" id="spec"></dl>
 
     <div class="actions">
-      <button class="act" id="copy-ip" type="button">کپی آی‌پی</button>
-      <a class="act" id="map-link" href="#" target="_blank" rel="noopener">نقشه</a>
-      <button class="act" id="reload" type="button">تازه‌سازی</button>
+      <button class="pill" id="copy-ip" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg>
+        کپی
+      </button>
+      <a class="pill" id="map-link" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>
+        نقشه
+      </a>
+      <button class="pill" id="reload" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
+        تازه
+      </button>
     </div>
   </main>
 
-  <footer class="sig">
-    <span id="provider"></span>
-    <span class="sep">·</span>
-    <span>devkit</span>
-  </footer>
+  <footer class="sig"><span id="provider"></span><span class="sep">·</span><span>devkit</span></footer>
 </div>
 
 <div class="toast" id="toast" hidden></div>
