@@ -1,0 +1,49 @@
+name: probe
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Probe feed candidates
+        run: |
+          probe () {
+            code=$(curl -sSL -m 20 --compressed \
+              -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36" \
+              -o /tmp/body -w "%{http_code}" "$2" 2>/dev/null || echo ERR)
+            size=$(wc -c < /tmp/body 2>/dev/null || echo 0)
+            kind=$(head -c 120 /tmp/body | tr -d '\n' | cut -c1-60)
+            echo "$1 | $code | ${size}b | $kind"
+          }
+          while IFS='|' read -r name url; do
+            [ -z "$name" ] && continue
+            probe "$name" "$url"
+          done <<'EOF'
+          bbc-fa|https://feeds.bbci.co.uk/persian/rss.xml
+          iranintl-fa|https://www.iranintl.com/fa/feed
+          iranintl-root|https://www.iranintl.com/feed
+          dw-fa|https://rss.dw.com/rdf/rss-fa-all
+          euronews-fa|https://parsi.euronews.com/rss
+          zamaneh|https://radiozamaneh.com/feed/
+          iranwire|https://iranwire.com/fa/feed/
+          kayhanlondon|https://kayhan.london/fa/feed/
+          independent-fa|https://www.independentpersian.com/rss
+          voa-fa|https://ir.voanews.com/api/zrqiteu_qq
+          radiofarda|https://www.radiofarda.com/api/zrqiteu_qq
+          alarabiya-fa|https://farsi.alarabiya.net/rss
+          trt-fa|https://www.trt.net.tr/persian/rss
+          manoto|https://www.manoto1.com/rss
+          fars|https://farsnews.ir/rss
+          fars-alt|https://www.farsnews.ir/rss
+          asriran-article|https://www.asriran.com/fa/news/1200218
+          mehr-article|https://www.mehrnews.com/news/6983317
+          khabaronline-article|https://www.khabaronline.ir/news/2290539
+          tabnak-article|https://tabnak.ir/fa/news/100000382
+          zoomit-article|https://www.zoomit.ir/health-medical/469379-creatine-brain-health-gut-inflammation/
+          isna-home|https://www.isna.ir/
+          irna-home|https://www.irna.ir/
+          EOF
