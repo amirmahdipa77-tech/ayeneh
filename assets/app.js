@@ -19,18 +19,6 @@
 
   /* ───────── helpers ───────── */
 
-  async function api(url, timeout = 8000) {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), timeout);
-    try {
-      const res = await fetch(url, { signal: ctrl.signal, cache: "no-store" });
-      if (!res.ok) throw new Error(res.status);
-      return await res.json();
-    } finally {
-      clearTimeout(timer);
-    }
-  }
-
   function toast(text) {
     el.toast.textContent = text;
     el.toast.hidden = false;
@@ -87,22 +75,104 @@
     lat: d.latitude, lon: d.longitude, tz: d.timezone,
   });
 
-  async function fetchIp() {
-    try {
-      const r = await api("https://ipwho.is/");
-      if (r && r.success !== false && r.ip) return { data: normalizeWho(r), provider: "ipwho.is" };
-    } catch { /* next */ }
-    try {
-      const r = await api("https://ipapi.co/json/");
-      if (r && !r.error && r.ip) return { data: normalizeIpapi(r), provider: "ipapi.co" };
-    } catch { /* next */ }
-    const r = await api("https://api64.ipify.org");
-    return { data: { ip: r.ip }, provider: "ipify" };
+  /* ───────── providers ─────────
+     All of them are fired at once; the first *complete* answer wins, and a
+     minimal one (IP only) is used if nothing better shows up quickly. */
+
+  const PROVIDERS = [
+    {
+      name: "ipwho.is", full: true, url: "https://ipwho.is/",
+      parse: (d) => (d && d.success !== false && d.ip ? normalizeWho(d) : null),
+    },
+    {
+      name: "ipapi.co", full: true, url: "https://ipapi.co/json/",
+      parse: (d) => (d && !d.error && d.ip ? normalizeIpapi(d) : null),
+    },
+    {
+      name: "freeipapi.com", full: true, url: "https://freeipapi.com/api/json",
+      parse: (d) => (d && d.ipAddress ? {
+        ip: d.ipAddress, code: d.countryCode, country: d.countryName,
+        city: d.cityName, region: d.regionName, isp: "", asn: "",
+        lat: d.latitude, lon: d.longitude, tz: d.timeZone,
+      } : null),
+    },
+    {
+      name: "ipinfo.io", full: true, url: "https://ipinfo.io/json",
+      parse: (d) => (d && d.ip ? {
+        ip: d.ip, code: d.country, country: d.country,
+        city: d.city, region: d.region, isp: d.org, asn: "",
+        lat: d.loc ? +d.loc.split(",")[0] : null,
+        lon: d.loc ? +d.loc.split(",")[1] : null,
+        tz: d.timezone,
+      } : null),
+    },
+    {
+      name: "cloudflare", full: false, url: "https://www.cloudflare.com/cdn-cgi/trace", text: true,
+      parse: (t) => {
+        const o = Object.fromEntries(String(t).trim().split("\n").map((l) => l.split("=")));
+        return o.ip ? { ip: o.ip, code: o.loc, country: "", city: "", isp: "" } : null;
+      },
+    },
+    {
+      name: "myip.com", full: false, url: "https://api.myip.com",
+      parse: (d) => (d && d.ip ? { ip: d.ip, code: d.cc, country: d.country, city: "", isp: "" } : null),
+    },
+    {
+      name: "ipify", full: false, url: "https://api64.ipify.org?format=json",
+      parse: (d) => (d && d.ip ? { ip: d.ip, code: "", country: "", city: "", isp: "" } : null),
+    },
+  ];
+
+  function fetchIp() {
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      let minimal = null;
+      let pending = PROVIDERS.length;
+
+      const finish = (payload) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(deadline);
+        resolve(payload);
+      };
+
+      // if only minimal answers have arrived, take the best of them
+      const deadline = setTimeout(() => {
+        if (settled) return;
+        if (minimal) finish(minimal);
+        else reject(new Error("no provider answered"));
+      }, 6000);
+
+      for (const p of PROVIDERS) {
+        (async () => {
+          try {
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 5000);
+            const res = await fetch(p.url, { signal: ctrl.signal, cache: "no-store" });
+            clearTimeout(timer);
+            if (!res.ok) throw new Error(res.status);
+
+            const raw = p.text ? await res.text() : await res.json();
+            const data = p.parse(raw);
+            if (!data || !data.ip) throw new Error("empty");
+
+            if (p.full && data.code) finish({ data, provider: p.name });
+            else if (!minimal) minimal = { data, provider: p.name };
+          } catch { /* ignore, another provider may win */ }
+          pending -= 1;
+          if (pending === 0 && !settled) {
+            if (minimal) finish(minimal);
+            else reject(new Error("no provider answered"));
+          }
+        })();
+      }
+    });
   }
 
   /* ───────── render ───────── */
 
   function renderFlag(code) {
+    clearTimeout(el.flag._t);
     if (!code) {
       el.flag.hidden = true;
       el.flagFallback.hidden = false;
@@ -118,11 +188,16 @@
     el.flag.sizes = "100vw";
     el.flag.src = `https://flagcdn.com/w640/${cc}.png`;
 
-    el.flag.onerror = () => {
+    const fail = () => {
       el.flag.hidden = true;
       el.flagFallback.hidden = false;
       el.flagCode.textContent = code;
     };
+    el.flag.onerror = fail;
+    clearTimeout(el.flag._t);
+    el.flag._t = setTimeout(() => {
+      if (!el.flag.complete || !el.flag.naturalWidth) fail();
+    }, 4000);
   }
 
   function render(d, provider) {
@@ -141,7 +216,7 @@
     ].filter(Boolean).join("  ·  ");
 
     el.map.href = d.lat != null
-      ? `https://www.openstreetmap.org/
+      ? `https://www.openstreetmap.org/?mlat=${d.lat}&mlon=${d.lon}#map=11/${d.lat}/${d.lon}`
       : "#";
     el.provider.textContent = provider;
 
@@ -157,8 +232,9 @@
       if (!first) toast("تازه شد");
     } catch {
       el.country.textContent = "دسترسی نشد";
-      el.meta.textContent = "اتصال یا مسدودسازی مرورگر را بررسی کنید.";
+      el.meta.innerHTML = 'سرویس‌های آی‌پی جواب ندادند. <button class="retry" id="retry" type="button">تلاش دوباره</button>';
       typeIP("—");
+      document.getElementById("retry")?.addEventListener("click", () => load(false));
     } finally {
       el.glass.classList.remove("loading");
       el.reload.disabled = false;
@@ -187,6 +263,21 @@
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
   }
+
+  /* safety net: if any entry animation fails to run, show the content anyway */
+  setTimeout(() => {
+    if (getComputedStyle(el.glass).opacity === "0") {
+      el.glass.style.opacity = "1";
+      el.glass.style.transform = "none";
+    }
+    document.querySelectorAll(".glass > *").forEach((n) => {
+      if (getComputedStyle(n).opacity === "0") {
+        n.style.opacity = "1";
+        n.style.transform = "none";
+      }
+    });
+    if (getComputedStyle(el.flag).opacity === "0") el.flag.style.opacity = "1";
+  }, 1500);
 
   load(true);
 })();
