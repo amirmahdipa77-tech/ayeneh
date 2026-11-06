@@ -1,0 +1,43 @@
+name: update-news
+
+on:
+  schedule:
+    - cron: "*/20 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "data/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-news
+  cancel-in-progress: true
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch feeds
+        run: node scripts/fetch.mjs
+
+      - name: Commit data
+        run: |
+          git config user.name "ayeneh-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -z "$(git status --porcelain data/)" ]; then
+            echo "بدون تغییر"
+            exit 0
+          fi
+          git add data/news.json
+          git commit -m "data: به‌روزرسانی تیترها $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push

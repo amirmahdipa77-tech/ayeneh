@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>آینه — تیترهای خبر ایران</title>
+<meta name="description" content="آینه: تیترهای تازه خبرگزاری‌های ایران در یک صفحه ساده و سریع.">
+<meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111312" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='none' stroke='%231b7f74' stroke-width='9'/><circle cx='50' cy='50' r='14' fill='%231b7f74'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#list">رفتن به فهرست خبر</a>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"></span>
+      <h1>آینه</h1>
+    </div>
+    <div class="bar-actions">
+      <button id="refresh" class="icon-btn" type="button" aria-label="به‌روزرسانی">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button id="theme" class="icon-btn" type="button" aria-label="تغییر پوسته">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="tools">
+    <label class="search">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input id="q" type="search" inputmode="search" placeholder="جست‌وجو در تیترها" autocomplete="off" aria-label="جست‌وجو در تیترها">
+    </label>
+    <div id="chips" class="chips" role="tablist" aria-label="فیلتر منبع"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <p id="status" class="status" role="status"></p>
+  <ol id="list" class="list" start="1"></ol>
+  <p id="empty" class="empty" hidden>چیزی برای نمایش نیست.</p>
+  <div class="more-wrap">
+    <button id="more" class="more" type="button" hidden>بیشتر</button>
+  </div>
+</main>
+
+<footer class="foot">
+  <p id="foot-line"></p>
+  <p class="tiny">همهٔ تیترها و لینک‌ها از فید رسمی هر خبرگزاری خوانده می‌شوند؛ متن کامل در سایت اصلی باز می‌شود.</p>
+</footer>
+
+<script src="assets/app.js" defer></script>
+</body>
+</html>
