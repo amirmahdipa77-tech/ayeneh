@@ -136,8 +136,8 @@
 
   function moveIndicator(btn) {
     if (!btn) return;
+    indicator.style.left = `${btn.offsetLeft + 8}px`;
     indicator.style.width = `${btn.offsetWidth - 16}px`;
-    indicator.style.transform = `translateX(${btn.offsetLeft + 8}px)`;
   }
 
   function selectTab(id, btn) {
@@ -260,14 +260,28 @@
     if (img.tagName !== "IMG") return;
     const host = img.parentElement;
     if (!host) return;
+
+    const card = img.closest("[data-id]");
+    const item = card && state.items.find((x) => x.i === card.dataset.id);
+    const initial = item ? (sourceName(item.s) || "خ").trim().charAt(0) : "خ";
+
     img.remove();
-    if (host.classList.contains("thumb") && !host.querySelector(".fallback")) {
-      const f = document.createElement("div");
-      f.className = "fallback";
-      f.textContent = "آ";
-      host.appendChild(f);
+
+    if (host.classList.contains("thumb")) {
+      if (!host.querySelector(".fallback")) {
+        const f = document.createElement("div");
+        f.className = "fallback";
+        f.textContent = initial;
+        host.appendChild(f);
+      }
+      return;
     }
-    if (host.classList.contains("hero-media")) host.style.background = "var(--bg-soft)";
+    if (host.classList.contains("reader-hero")) {
+      host.remove();
+      return;
+    }
+    host.classList.add("no-img");
+    host.closest(".hero, .card-wide")?.classList.add("no-img");
   }, true);
 
   /* infinite scroll */
@@ -820,4 +834,11 @@
   addEventListener("resize", () => moveIndicator($('.tab[aria-selected="true"]', tabsEl)));
 
   loadData(false);
+
+  /* offline shell — only over https, and never in a local file preview */
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    });
+  }
 })();

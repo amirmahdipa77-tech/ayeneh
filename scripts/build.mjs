@@ -177,7 +177,7 @@ function parseFeed(xml, source) {
     seen.add(u);
 
     const raw = pick(block, ["description", "summary", "content:encoded", "content"]);
-    const excerpt = clip(clean(raw), 190);
+    const excerpt = clip(clean(raw), 280);
     const date = parseDate(pick(block, ["pubDate", "published", "updated", "dc:date", "date"]));
     const img = pickImage(block);
 
