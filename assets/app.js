@@ -8,9 +8,9 @@
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const el = {
-    info: $(".info"), country: $("#country"), ip: $("#my-ip"), meta: $("#ip-meta"),
-    spec: $("#spec"), flag: $("#flag"), flagFallback: $("#flag-fallback"),
-    flagCode: $("#flag-code"), provider: $("#provider"),
+    country: $("#country"), ip: $("#my-ip"), meta: $("#ip-meta"), spec: $("#spec"),
+    flag: $("#flag"), flagFallback: $("#flag-fallback"), flagCode: $("#flag-code"),
+    provider: $("#provider"), cc: $("#cc"), eyebrow: $("#eyebrow"),
     copy: $("#copy-ip"), reload: $("#reload"), map: $("#map-link"), toast: $("#toast"),
   };
 
@@ -164,8 +164,9 @@
     el.flag.hidden = false;
     el.flagFallback.hidden = true;
     el.flag.alt = code;
-    el.flag.srcset = `https://flagcdn.com/w1280/${cc}.png 2x, https://flagcdn.com/w640/${cc}.png 1x`;
-    el.flag.src = `https://flagcdn.com/w640/${cc}.png`;
+    el.flag.srcset = `https://flagcdn.com/w640/${cc}.png 640w, https://flagcdn.com/w1280/${cc}.png 1280w, https://flagcdn.com/w2560/${cc}.png 2560w`;
+    el.flag.sizes = "100vw";
+    el.flag.src = `https://flagcdn.com/w1280/${cc}.png`;
 
     const fail = () => {
       el.flag.hidden = true;
@@ -179,17 +180,19 @@
   }
 
   function renderSpec(d) {
+    // always four cells so the grid stays a clean 2×2
     const rows = [
       ["استان", d.region],
       ["مختصات", d.lat != null ? `${(+d.lat).toFixed(3)}, ${(+d.lon).toFixed(3)}` : ""],
       ["منطقهٔ زمانی", d.tz],
       ["شبکه", d.network],
-    ].filter(([, v]) => v);
+    ].map(([k, v]) => [k, v || "—"]);
 
+    const hasAny = rows.some(([, v]) => v !== "—");
     el.spec.innerHTML = rows
       .map(([k, v]) => `<div><dt>${k}</dt><dd title="${String(v).replace(/"/g, "&quot;")}">${v}</dd></div>`)
       .join("");
-    el.spec.hidden = rows.length === 0;
+    el.spec.hidden = !hasAny;
   }
 
   function render(d, provider) {
@@ -201,6 +204,8 @@
     renderFlag(d.code);
     typeIP(d.ip || "—");
 
+    el.cc.textContent = d.code || "";
+    el.eyebrow.textContent = `your ip · ${d.ip?.includes(":") ? "ipv6" : "ipv4"}`;
     el.meta.textContent = [d.city, d.isp, d.asn].filter(Boolean).join("  ·  ");
     renderSpec(d);
 
@@ -213,7 +218,7 @@
   }
 
   async function load(first = false) {
-    el.info.classList.add("loading");
+    document.body.classList.add("loading");
     el.reload.disabled = true;
     try {
       const { data, provider } = await fetchIp();
@@ -221,12 +226,13 @@
       if (!first) toast("تازه شد");
     } catch {
       el.country.textContent = "دسترسی نشد";
+      el.cc.textContent = "";
       el.meta.innerHTML = 'سرویس‌های آی‌پی جواب ندادند. <button class="retry" id="retry" type="button">تلاش دوباره</button>';
       el.spec.hidden = true;
       typeIP("—");
       document.getElementById("retry")?.addEventListener("click", () => load(false));
     } finally {
-      el.info.classList.remove("loading");
+      document.body.classList.remove("loading");
       el.reload.disabled = false;
     }
   }
@@ -256,7 +262,7 @@
 
   /* safety net: if an entry animation never runs, show everything anyway */
   setTimeout(() => {
-    document.querySelectorAll(".info > *, .sig").forEach((n) => {
+    document.querySelectorAll(".content > *, .sig, .hero-top").forEach((n) => {
       if (getComputedStyle(n).opacity === "0") {
         n.style.opacity = "1";
         n.style.transform = "none";
