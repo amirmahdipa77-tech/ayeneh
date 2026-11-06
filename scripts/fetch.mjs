@@ -39,7 +39,8 @@ const SOURCES = [
     feeds: ["https://www.mehrnews.com/rss", "https://www.mehrnews.com/rss/pl/8"] },
 
   { id: "yjc", name: "باشگاه خبرنگاران", home: "https://www.yjc.ir",
-    feeds: ["https://www.yjc.ir/fa/rss/allnews"] },
+    headers: { referer: "https://www.yjc.ir/", "user-agent": "Feedly/1.0 (+http://www.feedly.com/fetcher.html; like FeedFetcher-Google)" },
+    feeds: ["https://www.yjc.ir/fa/rss/allnews", "https://www.yjc.ir/fa/rss"] },
 
   { id: "khabaronline", name: "خبرآنلاین", home: "https://www.khabaronline.ir",
     feeds: ["https://www.khabaronline.ir/rss"] },
@@ -59,8 +60,19 @@ const SOURCES = [
   { id: "tasnim", name: "تسنیم", home: "https://www.tasnimnews.com",
     feeds: [
       "https://www.tasnimnews.com/fa/rss/feed/0/0/8/0/AllStories",
+      "https://www.tasnimnews.ir/fa/rss/feed/0/0/8/0/AllStories",
+      "https://www.tasnimnews.ir/fa/rss",
       "https://www.tasnimnews.com/fa/rss/feed/0/8/0/%D9%85%D9%87%D9%85%E2%80%8C%D8%AA%D8%B1%DB%8C%D9%86-%D8%A7%D8%AE%D8%A8%D8%A7%D8%B1-%D8%AA%D8%B3%D9%86%DB%8C%D9%85",
     ] },
+
+  { id: "ilna", name: "ایلنا", home: "https://www.ilna.ir",
+    feeds: ["https://www.ilna.ir/rss", "https://www.ilna.ir/rss-fory"] },
+
+  { id: "donya", name: "دنیای اقتصاد", home: "https://donya-e-eqtesad.com",
+    feeds: ["https://donya-e-eqtesad.com/fa/rss", "https://donya-e-eqtesad.com/rss"] },
+
+  { id: "alef", name: "الف", home: "https://alef.ir",
+    feeds: ["https://alef.ir/rss", "https://www.alef.ir/rss"] },
 
   { id: "varzesh3", name: "ورزش سه", home: "https://www.varzesh3.com",
     feeds: ["https://www.varzesh3.com/rss/all"] },
@@ -184,7 +196,7 @@ function parseDate(raw) {
 /* fetching                                                            */
 /* ------------------------------------------------------------------ */
 
-async function fetchText(url) {
+async function fetchText(url, extra = {}) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
@@ -195,6 +207,7 @@ async function fetchText(url) {
         "user-agent": UA,
         accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*",
         "accept-language": "fa-IR,fa;q=0.9,en;q=0.7",
+        ...extra,
       },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -259,7 +272,7 @@ async function loadSource(source) {
   const errors = [];
   for (const feed of source.feeds) {
     try {
-      const xml = await fetchText(feed);
+      const xml = await fetchText(feed, source.headers || {});
       if (!/<(item|entry)\b/i.test(xml)) throw new Error("no items in feed");
       const items = parseFeed(xml, source);
       if (!items.length) throw new Error("feed parsed but empty");
